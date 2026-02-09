@@ -6,16 +6,11 @@ enabled = true
 
   [analyzers.meta]
   environment = ["browser"]
+  # Use underscores instead of joined words
   typescript = true
-  # Point this to your tsconfig file if it's not in the root
-  tsconfig_path = "./tsconfig.json" 
-  # Helps the analyzer understand JSX syntax
+  tsconfig_path = "./tsconfig.json"
   jsx_framework = "react"
 
 [[transformers]]
 name = "prettier"
-enabled = true
-
-[[analyzers]]
-name = "test-coverage"
 enabled = true
