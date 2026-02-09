@@ -1,17 +1,10 @@
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Button } from './ui/button';
-import { ScrollArea } from './ui/scroll-area';
-import { Badge } from './ui/badge';
-import { 
-  Zap, 
-  GitBranch, 
-  Wand2, 
-  Send, 
-  Database,
-  Plus
-} from 'lucide-react';
-import type { NodeCategory } from '../types/core';
-import { getCategoryColor } from '../utils/type-helpers';
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
+import { Badge } from "./ui/badge";
+import { Zap, GitBranch, Wand2, Send, Database, Plus } from "lucide-react";
+import type { NodeCategory } from "../types/core";
+import { getCategoryColor } from "../utils/type-helpers";
 
 interface NodePaletteProps {
   onNodeSelect: (nodeType: string) => void;
@@ -23,49 +16,97 @@ const nodeCategories: Array<{
   nodes: Array<{ type: string; label: string; description: string }>;
 }> = [
   {
-    category: 'trigger',
+    category: "trigger",
     icon: <Zap className="w-4 h-4" />,
     nodes: [
-      { type: 'trigger.http', label: 'HTTP Trigger', description: 'Trigger on HTTP request' },
-      { type: 'trigger.timer', label: 'Timer', description: 'Trigger on schedule' },
-      { type: 'trigger.manual', label: 'Manual', description: 'Manual trigger' }
-    ]
+      {
+        type: "trigger.http",
+        label: "HTTP Trigger",
+        description: "Trigger on HTTP request",
+      },
+      {
+        type: "trigger.timer",
+        label: "Timer",
+        description: "Trigger on schedule",
+      },
+      {
+        type: "trigger.manual",
+        label: "Manual",
+        description: "Manual trigger",
+      },
+    ],
   },
   {
-    category: 'logic',
+    category: "logic",
     icon: <GitBranch className="w-4 h-4" />,
     nodes: [
-      { type: 'logic.if', label: 'If Condition', description: 'Branch on condition' },
-      { type: 'logic.switch', label: 'Switch', description: 'Multi-way branch' },
-      { type: 'logic.compare', label: 'Compare', description: 'Compare values' }
-    ]
+      {
+        type: "logic.if",
+        label: "If Condition",
+        description: "Branch on condition",
+      },
+      {
+        type: "logic.switch",
+        label: "Switch",
+        description: "Multi-way branch",
+      },
+      {
+        type: "logic.compare",
+        label: "Compare",
+        description: "Compare values",
+      },
+    ],
   },
   {
-    category: 'transform',
+    category: "transform",
     icon: <Wand2 className="w-4 h-4" />,
     nodes: [
-      { type: 'transform.map', label: 'Map', description: 'Transform array' },
-      { type: 'transform.filter', label: 'Filter', description: 'Filter array' },
-      { type: 'transform.reduce', label: 'Reduce', description: 'Reduce array' }
-    ]
+      { type: "transform.map", label: "Map", description: "Transform array" },
+      {
+        type: "transform.filter",
+        label: "Filter",
+        description: "Filter array",
+      },
+      {
+        type: "transform.reduce",
+        label: "Reduce",
+        description: "Reduce array",
+      },
+    ],
   },
   {
-    category: 'effect',
+    category: "effect",
     icon: <Send className="w-4 h-4" />,
     nodes: [
-      { type: 'effect.http', label: 'HTTP Request', description: 'Make HTTP call' },
-      { type: 'effect.email', label: 'Send Email', description: 'Send email' },
-      { type: 'effect.db', label: 'Database', description: 'Write to database' }
-    ]
+      {
+        type: "effect.http",
+        label: "HTTP Request",
+        description: "Make HTTP call",
+      },
+      { type: "effect.email", label: "Send Email", description: "Send email" },
+      {
+        type: "effect.db",
+        label: "Database",
+        description: "Write to database",
+      },
+    ],
   },
   {
-    category: 'data',
+    category: "data",
     icon: <Database className="w-4 h-4" />,
     nodes: [
-      { type: 'data.constant', label: 'Constant', description: 'Constant value' },
-      { type: 'data.variable', label: 'Variable', description: 'Workflow variable' }
-    ]
-  }
+      {
+        type: "data.constant",
+        label: "Constant",
+        description: "Constant value",
+      },
+      {
+        type: "data.variable",
+        label: "Variable",
+        description: "Workflow variable",
+      },
+    ],
+  },
 ];
 
 export const NodePalette = ({ onNodeSelect }: NodePaletteProps) => {
@@ -91,7 +132,7 @@ export const NodePalette = ({ onNodeSelect }: NodePaletteProps) => {
                   </h3>
                 </div>
                 <div className="space-y-1">
-                  {nodes.map(node => (
+                  {nodes.map((node) => (
                     <Button
                       key={node.type}
                       variant="ghost"
@@ -101,7 +142,9 @@ export const NodePalette = ({ onNodeSelect }: NodePaletteProps) => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <Plus className="w-3 h-3 text-slate-400" />
-                          <span className="text-sm text-slate-200">{node.label}</span>
+                          <span className="text-sm text-slate-200">
+                            {node.label}
+                          </span>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">
                           {node.description}

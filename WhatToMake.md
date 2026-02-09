@@ -1,5 +1,3 @@
-
-
 ### **A Type-Safe Visual Workflow / Rule Engine (with plugins)**
 
 Think **Notion + Zapier + XState had a baby**, but smaller and evil.
@@ -8,34 +6,33 @@ This single project forces you to use **more different TypeScript features than 
 
 ---
 
+### 🔥 Core TypeScript Concepts (you _will_ use them)
 
-### 🔥 Core TypeScript Concepts (you *will* use them)
-
-* Discriminated unions
-* Generics (basic → advanced → cursed)
-* Conditional types
-* Mapped types
-* Recursive types
-* Utility types (built-in + custom)
-* `as const` + literal inference
-* `satisfies`
-* Type narrowing & exhaustiveness checks
-* Branded / nominal types
-* Readonly & immutability modeling
+- Discriminated unions
+- Generics (basic → advanced → cursed)
+- Conditional types
+- Mapped types
+- Recursive types
+- Utility types (built-in + custom)
+- `as const` + literal inference
+- `satisfies`
+- Type narrowing & exhaustiveness checks
+- Branded / nominal types
+- Readonly & immutability modeling
 
 ---
 
 ### 🧠 Advanced / Rare TS Concepts
 
-* Type inference across function boundaries
-* Type-safe event systems
-* Variadic tuple types
-* Template literal types
-* Higher-kinded-ish patterns
-* Compile-time graph validation
-* Schema → runtime → type inference loops
-* Module augmentation (for plugins)
-* Phantom types
+- Type inference across function boundaries
+- Type-safe event systems
+- Variadic tuple types
+- Template literal types
+- Higher-kinded-ish patterns
+- Compile-time graph validation
+- Schema → runtime → type inference loops
+- Module augmentation (for plugins)
+- Phantom types
 
 Most projects touch **maybe 30%** of these.
 This one touches **~90%**.
@@ -48,16 +45,16 @@ This one touches **~90%**.
 
 Users drag blocks like:
 
-* Trigger (HTTP request, timer, button)
-* Logic (if / switch / map)
-* Data (transform, filter)
-* Effects (API call, email, DB write)
+- Trigger (HTTP request, timer, button)
+- Logic (if / switch / map)
+- Data (transform, filter)
+- Effects (API call, email, DB write)
 
 Each block:
 
-* Has **typed inputs**
-* Produces **typed outputs**
-* Can only connect to compatible blocks
+- Has **typed inputs**
+- Produces **typed outputs**
+- Can only connect to compatible blocks
 
 And TypeScript enforces this.
 
@@ -71,7 +68,7 @@ And TypeScript enforces this.
 type Node =
   | { type: "trigger"; output: TriggerOutput }
   | { type: "condition"; input: boolean; output: boolean }
-  | { type: "transform"; input: Data; output: Data }
+  | { type: "transform"; input: Data; output: Data };
 ```
 
 ---
@@ -79,21 +76,22 @@ type Node =
 ### 2️⃣ Edge compatibility (conditional types)
 
 ```ts
-type CanConnect<A, B> =
-  A extends { output: infer O }
-    ? B extends { input: infer I }
-      ? O extends I ? true : false
+type CanConnect<A, B> = A extends { output: infer O }
+  ? B extends { input: infer I }
+    ? O extends I
+      ? true
       : false
     : false
+  : false;
 ```
 
 ---
 
 ### 3️⃣ Graph typing (recursive + inference)
 
-* Prevent cycles
-* Ensure every node’s inputs are satisfied
-* Infer final output type of the workflow
+- Prevent cycles
+- Ensure every node’s inputs are satisfied
+- Infer final output type of the workflow
 
 This is **not** trivial and forces deep TS thinking.
 
@@ -105,12 +103,12 @@ Third-party plugins can add new node types.
 
 That means:
 
-* Generic plugin interfaces
-* Module augmentation
-* Constraint-based typing
-* Safe extensibility without `any`
+- Generic plugin interfaces
+- Module augmentation
+- Constraint-based typing
+- Safe extensibility without `any`
 
-This alone teaches *real-world advanced TS*.
+This alone teaches _real-world advanced TS_.
 
 ---
 
@@ -118,9 +116,9 @@ This alone teaches *real-world advanced TS*.
 
 You’ll need:
 
-* Runtime schemas (Zod / custom)
-* Compile-time inference from schemas
-* Bridging runtime ↔ static typing
+- Runtime schemas (Zod / custom)
+- Compile-time inference from schemas
+- Bridging runtime ↔ static typing
 
 This is where people usually break 😄
 
@@ -144,11 +142,9 @@ This is where people usually break 😄
 
 Add:
 
-* Versioned workflows (backward-compatible types)
-* Undo/redo with immutable state typing
-* Import/export JSON → typed restore
-* Visual diffing between workflows
+- Versioned workflows (backward-compatible types)
+- Undo/redo with immutable state typing
+- Import/export JSON → typed restore
+- Visual diffing between workflows
 
 Now you’re basically doing compiler work in React.
-
-
