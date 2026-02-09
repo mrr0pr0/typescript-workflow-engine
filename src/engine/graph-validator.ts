@@ -9,18 +9,18 @@ import type {
   Edge,
   NodeId,
   EdgeId,
-  ValidationError
-} from '../types/core';
+  ValidationError,
+} from "../types/core";
 import type {
   GraphValidationState,
   CycleDetectionResult,
   InputSatisfaction,
   TopologicalSort,
-  GraphValidationError
-} from '../types/graph';
-import { checkPortCompatibility } from '../types/compatibility';
-import { NodeId, EdgeId } from '../types/core';
-import { set } from 'react-hook-form';
+  GraphValidationError,
+} from "../types/graph";
+import { checkPortCompatibility } from "../types/compatibility";
+import { NodeId, EdgeId } from "../types/core";
+import { set } from "react-hook-form";
 
 export class GraphValidator {
   private nodes: Map<NodeId, WorkflowNode>;
@@ -29,8 +29,8 @@ export class GraphValidator {
   private reverseAdjacencyList: Map<NodeId, NodeId[]>;
 
   constructor(private graph: WorkflowGraph) {
-    this.nodes = new Map(graph.nodes.map(n => [n.id, n]));
-    this.edges = new Map(graph.edges.map(e => [e.id as EdgeId, e]));
+    this.nodes = new Map(graph.nodes.map((n) => [n.id, n]));
+    this.edges = new Map(graph.edges.map((e) => [e.id as EdgeId, e]));
     this.adjacencyList = this.buildAdjacencyList();
     this.reverseAdjacencyList = this.buildReverseAdjacencyList();
   }
@@ -51,8 +51,8 @@ export class GraphValidator {
     const cycleResult = this.detectCycles();
     if (cycleResult.hasCycle) {
       errors.push({
-        type: 'cycle',
-        nodes: cycleResult.cycle
+        type: "cycle",
+        nodes: cycleResult.cycle,
       });
     }
 
@@ -67,7 +67,7 @@ export class GraphValidator {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -158,12 +158,12 @@ export class GraphValidator {
     // Check if all nodes were processed
     if (result.length !== this.nodes.size) {
       const problematicNodes = Array.from(this.nodes.keys()).filter(
-        id => !result.includes(id)
+        (id) => !result.includes(id),
       );
       return {
         success: false,
-        reason: 'Graph contains cycles',
-        problematicNodes
+        reason: "Graph contains cycles",
+        problematicNodes,
       };
     }
 
@@ -180,14 +180,14 @@ export class GraphValidator {
       for (const input of node.inputs) {
         if (input.required) {
           const isConnected = Array.from(this.edges.values()).some(
-            edge => edge.target === node.id && edge.targetPort === input.id
+            (edge) => edge.target === node.id && edge.targetPort === input.id,
           );
 
           if (!isConnected) {
             errors.push({
-              type: 'unsatisfied-input',
+              type: "unsatisfied-input",
               nodeId: node.id,
-              portId: input.id
+              portId: input.id,
             });
           }
         }
@@ -204,40 +204,38 @@ export class GraphValidator {
     const errors: GraphValidationError[] = [];
 
     for (const edge of this.edges.values()) {
-        const sourceNode = this.nodes.get(edge.source);
-        const targetNode = this.nodes.get(edge.target);
+      const sourceNode = this.nodes.get(edge.source);
+      const targetNode = this.nodes.get(edge.target);
 
-        if (!sourceNode || !targetNode) {
-            continue; // will be caguht by checkMissingNodes
-        }
+      if (!sourceNode || !targetNode) {
+        continue; // will be caguht by checkMissingNodes
+      }
 
-        const sourcePort = sourceNode.outputs.find(p => p.id === edge.source);
-        const targetPort = targetNode.inputs.find(p => p.id === edge.target);
+      const sourcePort = sourceNode.outputs.find((p) => p.id === edge.source);
+      const targetPort = targetNode.inputs.find((p) => p.id === edge.target);
 
-        if (!sourcePort || !targetPort) {
-            errors.push({
-                type: 'invalid-connection',
-                edgeId: edge.id as EdgeId,
-                reason: 'Port not found'
-            });
-            continue;
-        }
+      if (!sourcePort || !targetPort) {
+        errors.push({
+          type: "invalid-connection",
+          edgeId: edge.id as EdgeId,
+          reason: "Port not found",
+        });
+        continue;
+      }
 
+      const compatibility = checkPortCompatibility(
+        sourcePort.portType,
+        targetPort.portType,
+      );
 
-        const compatibility = checkPortCompatibility(
-            sourcePort.portType,
-            targetPort.portType
-        );
-
-        if (!compatibility.valid) {
-            errors.push({
-                type: 'invalid-connection',
-                edgeId: edge.id as EdgeId,
-                reason: compatibility.errorMessage || 'type missmatch'
-            });
-        }
+      if (!compatibility.valid) {
+        errors.push({
+          type: "invalid-connection",
+          edgeId: edge.id as EdgeId,
+          reason: compatibility.errorMessage || "type missmatch",
+        });
+      }
     }
-
 
     return errors;
   }
@@ -256,15 +254,15 @@ export class GraphValidator {
     for (const nodeId of this.nodes.keys()) {
       if (!connectedNodes.has(nodeId) && this.nodes.size > 1) {
         errors.push({
-          type: 'orphan-node',
-          nodeId
+          type: "orphan-node",
+          nodeId,
         });
       }
     }
 
     return errors;
   }
-/**
+  /**
    * Check for duplicate node IDs
    */
   private checkDuplicateIds(): GraphValidationError[] {
@@ -275,8 +273,8 @@ export class GraphValidator {
     for (const node of this.graph.nodes) {
       if (nodeIds.has(node.id)) {
         errors.push({
-          type: 'duplicate-node-id',
-          nodeId: node.id
+          type: "duplicate-node-id",
+          nodeId: node.id,
         });
       }
       nodeIds.add(node.id);
@@ -285,8 +283,8 @@ export class GraphValidator {
     for (const edge of this.graph.edges) {
       if (edgeIds.has(edge.id as EdgeId)) {
         errors.push({
-          type: 'duplicate-edge-id',
-          edgeId: edge.id as EdgeId
+          type: "duplicate-edge-id",
+          edgeId: edge.id as EdgeId,
         });
       }
       edgeIds.add(edge.id as EdgeId);
@@ -304,16 +302,16 @@ export class GraphValidator {
     for (const edge of this.edges.values()) {
       if (!this.nodes.has(edge.source)) {
         errors.push({
-          type: 'missing-node',
+          type: "missing-node",
           nodeId: edge.source,
-          referencedBy: edge.id as EdgeId
+          referencedBy: edge.id as EdgeId,
         });
       }
       if (!this.nodes.has(edge.target)) {
         errors.push({
-          type: 'missing-node',
+          type: "missing-node",
           nodeId: edge.target,
-          referencedBy: edge.id as EdgeId
+          referencedBy: edge.id as EdgeId,
         });
       }
     }
@@ -369,14 +367,20 @@ export class GraphValidator {
       nodes: this.nodes,
       edges: this.edges,
       adjacencyList: new Map(
-        Array.from(this.adjacencyList.entries()).map(([k, v]) => [k, v as readonly NodeId[]])
+        Array.from(this.adjacencyList.entries()).map(([k, v]) => [
+          k,
+          v as readonly NodeId[],
+        ]),
       ),
       reverseAdjacencyList: new Map(
-        Array.from(this.reverseAdjacencyList.entries()).map(([k, v]) => [k, v as readonly NodeId[]])
+        Array.from(this.reverseAdjacencyList.entries()).map(([k, v]) => [
+          k,
+          v as readonly NodeId[],
+        ]),
       ),
       inputSatisfaction: new Map(),
       cycles: [],
-      topologicalOrder: topSort.success ? topSort.order : null
+      topologicalOrder: topSort.success ? topSort.order : null,
     };
   }
 }

@@ -1,10 +1,10 @@
-import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { ScrollArea } from './ui/scroll-area';
-import { Badge } from './ui/badge';
-import { Alert, AlertDescription } from './ui/alert';
-import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
-import type { WorkflowGraph } from '../types/core';
-import { getPortTypeColor, getPortTypeLabel } from '../utils/type-helpers';
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
+import { ScrollArea } from "./ui/scroll-area";
+import { Badge } from "./ui/badge";
+import { Alert, AlertDescription } from "./ui/alert";
+import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import type { WorkflowGraph } from "../types/core";
+import { getPortTypeColor, getPortTypeLabel } from "../utils/type-helpers";
 
 interface TypeInspectorProps {
   graph: WorkflowGraph;
@@ -15,7 +15,7 @@ interface TypeInspectorProps {
 export const TypeInspector = ({
   graph,
   validationErrors,
-  inferredTypes
+  inferredTypes,
 }: TypeInspectorProps) => {
   const hasErrors = validationErrors.length > 0;
   const typeCount = inferredTypes.size;
@@ -37,23 +37,33 @@ export const TypeInspector = ({
           <div className="space-y-4">
             {/* Graph Stats */}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-slate-200">Graph Statistics</h3>
+              <h3 className="text-sm font-semibold text-slate-200">
+                Graph Statistics
+              </h3>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="bg-slate-700 p-2 rounded">
                   <div className="text-slate-400">Nodes</div>
-                  <div className="text-lg font-bold text-slate-100">{graph.nodes.length}</div>
+                  <div className="text-lg font-bold text-slate-100">
+                    {graph.nodes.length}
+                  </div>
                 </div>
                 <div className="bg-slate-700 p-2 rounded">
                   <div className="text-slate-400">Edges</div>
-                  <div className="text-lg font-bold text-slate-100">{graph.edges.length}</div>
+                  <div className="text-lg font-bold text-slate-100">
+                    {graph.edges.length}
+                  </div>
                 </div>
                 <div className="bg-slate-700 p-2 rounded">
                   <div className="text-slate-400">Inferred Types</div>
-                  <div className="text-lg font-bold text-slate-100">{typeCount}</div>
+                  <div className="text-lg font-bold text-slate-100">
+                    {typeCount}
+                  </div>
                 </div>
                 <div className="bg-slate-700 p-2 rounded">
                   <div className="text-slate-400">Errors</div>
-                  <div className="text-lg font-bold text-red-400">{validationErrors.length}</div>
+                  <div className="text-lg font-bold text-red-400">
+                    {validationErrors.length}
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,7 +88,9 @@ export const TypeInspector = ({
             {/* Inferred Types */}
             {typeCount > 0 && (
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-slate-200">Inferred Types</h3>
+                <h3 className="text-sm font-semibold text-slate-200">
+                  Inferred Types
+                </h3>
                 <div className="space-y-2">
                   {Array.from(inferredTypes.entries()).map(([key, type]) => (
                     <div
@@ -91,14 +103,15 @@ export const TypeInspector = ({
                         className="text-[10px]"
                         style={{
                           borderColor: getPortTypeColor(type.portType),
-                          color: getPortTypeColor(type.portType)
+                          color: getPortTypeColor(type.portType),
                         }}
                       >
                         {getPortTypeLabel(type.portType)}
                       </Badge>
                       {type.inferredFrom && (
                         <div className="text-slate-400 text-[10px]">
-                          ← from {type.inferredFrom.nodeId}:{type.inferredFrom.portId}
+                          ← from {type.inferredFrom.nodeId}:
+                          {type.inferredFrom.portId}
                         </div>
                       )}
                     </div>
@@ -109,20 +122,22 @@ export const TypeInspector = ({
 
             {/* TypeScript Features Used */}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-slate-200">TS Features Used</h3>
+              <h3 className="text-sm font-semibold text-slate-200">
+                TS Features Used
+              </h3>
               <div className="flex flex-wrap gap-1">
                 {[
-                  'Discriminated Unions',
-                  'Generics',
-                  'Conditional Types',
-                  'Mapped Types',
-                  'Recursive Types',
-                  'Type Guards',
-                  'Branded Types',
-                  'Module Augmentation',
-                  'Template Literals',
-                  'Phantom Types'
-                ].map(feature => (
+                  "Discriminated Unions",
+                  "Generics",
+                  "Conditional Types",
+                  "Mapped Types",
+                  "Recursive Types",
+                  "Type Guards",
+                  "Branded Types",
+                  "Module Augmentation",
+                  "Template Literals",
+                  "Phantom Types",
+                ].map((feature) => (
                   <Badge
                     key={feature}
                     variant="secondary"
