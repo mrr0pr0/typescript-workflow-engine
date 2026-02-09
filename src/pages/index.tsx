@@ -1,14 +1,14 @@
-import { useState, useCallback } from 'react';
-import { WorkflowCanvas } from '../components/WorkflowCanvas';
-import { NodePalette } from '../components/NodePalette';
-import { TypeInspector } from '../components/TypeInspector';
-import { Button } from '../components/ui/button';
-import { useWorkflowGraph } from '../hooks/useWorkflowGraph';
-import { nodeFactories, type NodeFactoryType } from '../types/nodes';
-import { createNodeId } from '../types/core';
-import { Play, Save, Trash2, CheckCircle2 } from 'lucide-react';
-import { WorkflowExecutor } from '../engine/executor';
-import { useToast } from '../hooks/use-toast';
+import { useState, useCallback } from "react";
+import { WorkflowCanvas } from "../components/WorkflowCanvas";
+import { NodePalette } from "../components/NodePalette";
+import { TypeInspector } from "../components/TypeInspector";
+import { Button } from "../components/ui/button";
+import { useWorkflowGraph } from "../hooks/useWorkflowGraph";
+import { nodeFactories, type NodeFactoryType } from "../types/nodes";
+import { createNodeId } from "../types/core";
+import { Play, Save, Trash2, CheckCircle2 } from "lucide-react";
+import { WorkflowExecutor } from "../engine/executor";
+import { useToast } from "../hooks/use-toast";
 
 export default function Index() {
   const {
@@ -22,7 +22,7 @@ export default function Index() {
     inferTypes,
     clearGraph,
     validationErrors,
-    inferredTypes
+    inferredTypes,
   } = useWorkflowGraph();
 
   const { toast } = useToast();
@@ -32,34 +32,34 @@ export default function Index() {
     (nodeType: string) => {
       const factory = nodeFactories[nodeType as NodeFactoryType];
       if (!factory) {
-        console.error('Unknown node type:', nodeType);
+        console.error("Unknown node type:", nodeType);
         return;
       }
 
       const nodeId = createNodeId(`node-${Date.now()}`);
       const position = {
         x: Math.random() * 400 + 100,
-        y: Math.random() * 300 + 100
+        y: Math.random() * 300 + 100,
       };
 
       // Call factory with appropriate arguments
       let node;
-      if (nodeType === 'data.constant') {
+      if (nodeType === "data.constant") {
         node = factory(nodeId, position, null);
-      } else if (nodeType === 'data.variable') {
-        node = factory(nodeId, position, 'variable');
+      } else if (nodeType === "data.variable") {
+        node = factory(nodeId, position, "variable");
       } else {
         node = factory(nodeId, position);
       }
 
       addNode(node);
-      
+
       toast({
-        title: 'Node Added',
-        description: `Added ${node.label} to the workflow`
+        title: "Node Added",
+        description: `Added ${node.label} to the workflow`,
       });
     },
-    [addNode, toast]
+    [addNode, toast],
   );
 
   const handleValidate = useCallback(() => {
@@ -68,15 +68,15 @@ export default function Index() {
 
     if (isValid) {
       toast({
-        title: 'Validation Successful',
-        description: 'Workflow is valid and ready to execute',
-        variant: 'default'
+        title: "Validation Successful",
+        description: "Workflow is valid and ready to execute",
+        variant: "default",
       });
     } else {
       toast({
-        title: 'Validation Failed',
+        title: "Validation Failed",
         description: `Found ${validationErrors.length} error(s)`,
-        variant: 'destructive'
+        variant: "destructive",
       });
     }
   }, [validateGraph, inferTypes, validationErrors.length, toast]);
@@ -85,9 +85,9 @@ export default function Index() {
     const isValid = validateGraph();
     if (!isValid) {
       toast({
-        title: 'Cannot Execute',
-        description: 'Please fix validation errors first',
-        variant: 'destructive'
+        title: "Cannot Execute",
+        description: "Please fix validation errors first",
+        variant: "destructive",
       });
       return;
     }
@@ -98,28 +98,28 @@ export default function Index() {
       const result = await executor.execute({
         workflowId: graph.id,
         variables: new Map(),
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       if (result.success) {
         toast({
-          title: 'Execution Successful',
-          description: 'Workflow executed successfully'
+          title: "Execution Successful",
+          description: "Workflow executed successfully",
         });
-        console.log('Execution output:', result.output);
-        console.log('Execution logs:', result.logs);
+        console.log("Execution output:", result.output);
+        console.log("Execution logs:", result.logs);
       } else {
         toast({
-          title: 'Execution Failed',
+          title: "Execution Failed",
           description: result.error.message,
-          variant: 'destructive'
+          variant: "destructive",
         });
       }
     } catch (error) {
       toast({
-        title: 'Execution Error',
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: 'destructive'
+        title: "Execution Error",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
       });
     } finally {
       setIsExecuting(false);
@@ -127,11 +127,11 @@ export default function Index() {
   }, [graph, validateGraph, toast]);
 
   const handleClear = useCallback(() => {
-    if (confirm('Are you sure you want to clear the workflow?')) {
+    if (confirm("Are you sure you want to clear the workflow?")) {
       clearGraph();
       toast({
-        title: 'Workflow Cleared',
-        description: 'All nodes and edges have been removed'
+        title: "Workflow Cleared",
+        description: "All nodes and edges have been removed",
       });
     }
   }, [clearGraph, toast]);
@@ -174,7 +174,7 @@ export default function Index() {
             className="bg-blue-600 hover:bg-blue-700"
           >
             <Play className="w-4 h-4 mr-2" />
-            {isExecuting ? 'Executing...' : 'Execute'}
+            {isExecuting ? "Executing..." : "Execute"}
           </Button>
           <Button
             variant="outline"
@@ -201,7 +201,7 @@ export default function Index() {
             graph={graph}
             onNodesChange={(nodes) => {
               // Handle bulk node updates
-              nodes.forEach(node => updateNode(node.id, node));
+              nodes.forEach((node) => updateNode(node.id, node));
             }}
             onEdgesChange={(edges) => {
               // This is simplified - in production you'd handle edge updates properly

@@ -3,33 +3,37 @@
  * Demonstrates: Conditional Types, Mapped Types, Type-level Programming
  */
 
-import type { PortType, InputPort, OutputPort, WorkflowNode } from './core';
+import type { PortType, InputPort, OutputPort, WorkflowNode } from "./core";
 
 // Type-level compatibility checking
-export type IsCompatible<Source extends PortType, Target extends PortType> =
-  Source extends { kind: 'any' }
-    ? true
-    : Target extends { kind: 'any' }
+export type IsCompatible<
+  Source extends PortType,
+  Target extends PortType,
+> = Source extends { kind: "any" }
+  ? true
+  : Target extends { kind: "any" }
     ? true
     : Source extends { kind: infer SK }
-    ? Target extends { kind: infer TK }
-      ? SK extends TK
-        ? true
+      ? Target extends { kind: infer TK }
+        ? SK extends TK
+          ? true
+          : false
         : false
-      : false
-    : false;
+      : false;
 
 // Extract port type from port definition
 export type ExtractPortType<P> = P extends { portType: infer PT } ? PT : never;
 
 // Check if output port can connect to input port
-export type CanConnect<Out extends OutputPort, In extends InputPort> =
-  IsCompatible<ExtractPortType<Out>, ExtractPortType<In>>;
+export type CanConnect<
+  Out extends OutputPort,
+  In extends InputPort,
+> = IsCompatible<ExtractPortType<Out>, ExtractPortType<In>>;
 
 // Get all valid target ports for a source port
 export type ValidTargets<
   Source extends OutputPort,
-  Targets extends readonly InputPort[]
+  Targets extends readonly InputPort[],
 > = {
   [K in keyof Targets]: Targets[K] extends InputPort
     ? CanConnect<Source, Targets[K]> extends true
@@ -49,14 +53,14 @@ export interface ConnectionValidation {
 // Runtime compatibility checker
 export const checkPortCompatibility = (
   sourcePort: PortType,
-  targetPort: PortType
+  targetPort: PortType,
 ): ConnectionValidation => {
   // Any type is compatible with everything
-  if (sourcePort.kind === 'any' || targetPort.kind === 'any') {
+  if (sourcePort.kind === "any" || targetPort.kind === "any") {
     return {
       valid: true,
       sourceType: sourcePort.kind,
-      targetType: targetPort.kind
+      targetType: targetPort.kind,
     };
   }
 
@@ -65,20 +69,20 @@ export const checkPortCompatibility = (
     return {
       valid: true,
       sourceType: sourcePort.kind,
-      targetType: targetPort.kind
+      targetType: targetPort.kind,
     };
   }
 
   // Custom type compatibility (by name)
-  if (sourcePort.kind === 'custom' && targetPort.kind === 'custom') {
-    const sourceCustom = sourcePort as Extract<PortType, { kind: 'custom' }>;
-    const targetCustom = targetPort as Extract<PortType, { kind: 'custom' }>;
-    
+  if (sourcePort.kind === "custom" && targetPort.kind === "custom") {
+    const sourceCustom = sourcePort as Extract<PortType, { kind: "custom" }>;
+    const targetCustom = targetPort as Extract<PortType, { kind: "custom" }>;
+
     if (sourceCustom.typeName === targetCustom.typeName) {
       return {
         valid: true,
         sourceType: sourceCustom.typeName,
-        targetType: targetCustom.typeName
+        targetType: targetCustom.typeName,
       };
     }
   }
@@ -87,14 +91,14 @@ export const checkPortCompatibility = (
     valid: false,
     sourceType: sourcePort.kind,
     targetType: targetPort.kind,
-    errorMessage: `Type mismatch: cannot connect ${sourcePort.kind} to ${targetPort.kind}`
+    errorMessage: `Type mismatch: cannot connect ${sourcePort.kind} to ${targetPort.kind}`,
   };
 };
 
 // Port compatibility matrix type
 export type CompatibilityMatrix = {
-  readonly [SourceKind in PortType['kind']]: {
-    readonly [TargetKind in PortType['kind']]: boolean;
+  readonly [SourceKind in PortType["kind"]]: {
+    readonly [TargetKind in PortType["kind"]]: boolean;
   };
 };
 
@@ -108,7 +112,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: true,
     array: true,
     void: true,
-    custom: true
+    custom: true,
   },
   string: {
     any: true,
@@ -118,7 +122,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: false,
     void: false,
-    custom: false
+    custom: false,
   },
   number: {
     any: true,
@@ -128,7 +132,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: false,
     void: false,
-    custom: false
+    custom: false,
   },
   boolean: {
     any: true,
@@ -138,7 +142,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: false,
     void: false,
-    custom: false
+    custom: false,
   },
   object: {
     any: true,
@@ -148,7 +152,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: true,
     array: false,
     void: false,
-    custom: false
+    custom: false,
   },
   array: {
     any: true,
@@ -158,7 +162,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: true,
     void: false,
-    custom: false
+    custom: false,
   },
   void: {
     any: true,
@@ -168,7 +172,7 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: false,
     void: true,
-    custom: false
+    custom: false,
   },
   custom: {
     any: true,
@@ -178,14 +182,14 @@ export const compatibilityMatrix: CompatibilityMatrix = {
     object: false,
     array: false,
     void: false,
-    custom: true // Requires name check
-  }
+    custom: true, // Requires name check
+  },
 } as const;
 
 // Type-safe port finder
 export type FindPort<
   Ports extends readonly (InputPort | OutputPort)[],
-  PortId extends string
+  PortId extends string,
 > = Extract<Ports[number], { id: PortId }>;
 
 // Connection type inference
@@ -193,28 +197,32 @@ export type InferConnectionType<
   SourceNode extends WorkflowNode,
   SourcePortId extends string,
   TargetNode extends WorkflowNode,
-  TargetPortId extends string
-> = FindPort<SourceNode['outputs'], SourcePortId> extends OutputPort
-  ? FindPort<TargetNode['inputs'], TargetPortId> extends InputPort
-    ? CanConnect<
-        FindPort<SourceNode['outputs'], SourcePortId>,
-        FindPort<TargetNode['inputs'], TargetPortId>
-      >
-    : false
-  : false;
+  TargetPortId extends string,
+> =
+  FindPort<SourceNode["outputs"], SourcePortId> extends OutputPort
+    ? FindPort<TargetNode["inputs"], TargetPortId> extends InputPort
+      ? CanConnect<
+          FindPort<SourceNode["outputs"], SourcePortId>,
+          FindPort<TargetNode["inputs"], TargetPortId>
+        >
+      : false
+    : false;
 
 // Mapped type for all possible connections from a node
 export type PossibleConnections<Node extends WorkflowNode> = {
-  [OutputKey in Node['outputs'][number]['id']]: {
-    readonly outputPort: Extract<Node['outputs'][number], { id: OutputKey }>;
-    readonly compatibleTypes: ReadonlyArray<PortType['kind']>;
+  [OutputKey in Node["outputs"][number]["id"]]: {
+    readonly outputPort: Extract<Node["outputs"][number], { id: OutputKey }>;
+    readonly compatibleTypes: ReadonlyArray<PortType["kind"]>;
   };
 };
 
 // Helper to get compatible input types for an output
-export const getCompatibleInputTypes = (outputType: PortType['kind']): ReadonlyArray<PortType['kind']> => {
-  return (Object.keys(compatibilityMatrix[outputType]) as Array<PortType['kind']>)
-    .filter(targetType => compatibilityMatrix[outputType][targetType]);
+export const getCompatibleInputTypes = (
+  outputType: PortType["kind"],
+): ReadonlyArray<PortType["kind"]> => {
+  return (
+    Object.keys(compatibilityMatrix[outputType]) as Array<PortType["kind"]>
+  ).filter((targetType) => compatibilityMatrix[outputType][targetType]);
 };
 
 // Variadic tuple type for multiple connections
@@ -225,7 +233,7 @@ export type ConnectionChain<Nodes extends readonly WorkflowNode[]> = {
 // Template literal type for connection descriptions
 export type ConnectionDescription<
   SourceType extends string,
-  TargetType extends string
+  TargetType extends string,
 > = `${SourceType} -> ${TargetType}`;
 
 // Type-safe connection builder
@@ -233,7 +241,7 @@ export interface TypedConnection<
   Source extends WorkflowNode,
   Target extends WorkflowNode,
   SourcePort extends string,
-  TargetPort extends string
+  TargetPort extends string,
 > {
   readonly source: Source;
   readonly target: Target;
