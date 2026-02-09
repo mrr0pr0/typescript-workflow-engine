@@ -19,8 +19,6 @@ import type {
   GraphValidationError
 } from '../types/graph';
 import { checkPortCompatibility } from '../types/compatibility';
-import { NodeId, EdgeId } from '../types/core';
-import { set } from 'react-hook-form';
 
 export class GraphValidator {
   private nodes: Map<NodeId, WorkflowNode>;
@@ -204,43 +202,42 @@ export class GraphValidator {
     const errors: GraphValidationError[] = [];
 
     for (const edge of this.edges.values()) {
-        const sourceNode = this.nodes.get(edge.source);
-        const targetNode = this.nodes.get(edge.target);
+      const sourceNode = this.nodes.get(edge.source);
+      const targetNode = this.nodes.get(edge.target);
 
-        if (!sourceNode || !targetNode) {
-            continue; // will be caguht by checkMissingNodes
-        }
+      if (!sourceNode || !targetNode) {
+        continue; // Will be caught by checkMissingNodes
+      }
 
-        const sourcePort = sourceNode.outputs.find(p => p.id === edge.source);
-        const targetPort = targetNode.inputs.find(p => p.id === edge.target);
+      const sourcePort = sourceNode.outputs.find(p => p.id === edge.sourcePort);
+      const targetPort = targetNode.inputs.find(p => p.id === edge.targetPort);
 
-        if (!sourcePort || !targetPort) {
-            errors.push({
-                type: 'invalid-connection',
-                edgeId: edge.id as EdgeId,
-                reason: 'Port not found'
-            });
-            continue;
-        }
+      if (!sourcePort || !targetPort) {
+        errors.push({
+          type: 'invalid-connection',
+          edgeId: edge.id as EdgeId,
+          reason: 'Port not found'
+        });
+        continue;
+      }
 
+      const compatibility = checkPortCompatibility(
+        sourcePort.portType,
+        targetPort.portType
+      );
 
-        const compatibility = checkPortCompatibility(
-            sourcePort.portType,
-            targetPort.portType
-        );
-
-        if (!compatibility.valid) {
-            errors.push({
-                type: 'invalid-connection',
-                edgeId: edge.id as EdgeId,
-                reason: compatibility.errorMessage || 'type missmatch'
-            });
-        }
+      if (!compatibility.valid) {
+        errors.push({
+          type: 'invalid-connection',
+          edgeId: edge.id as EdgeId,
+          reason: compatibility.errorMessage || 'Type mismatch'
+        });
+      }
     }
-
 
     return errors;
   }
+
   /**
    * Check for orphan nodes (no connections)
    */
@@ -264,7 +261,8 @@ export class GraphValidator {
 
     return errors;
   }
-/**
+
+  /**
    * Check for duplicate node IDs
    */
   private checkDuplicateIds(): GraphValidationError[] {
@@ -384,3 +382,25 @@ export class GraphValidator {
 /**
  * Exhaustiveness check for validation errors
  */
+export const formatValidationError = (error: GraphValidationError): string => {
+  const errorType = error.type;
+  
+  if (errorType === 'cycle') {
+    return `Cycle detected: ${error.nodes.join(' -> ')}`;
+  } else if (errorType === 'unsatisfied-input') {
+    return `Unsatisfied input: ${error.nodeId}:${error.portId}`;
+  } else if (errorType === 'invalid-connection') {
+    return `Invalid connection ${error.edgeId}: ${error.reason}`;
+  } else if (errorType === 'orphan-node') {
+    return `Orphan node: ${error.nodeId}`;
+  } else if (errorType === 'duplicate-node-id') {
+    return `Duplicate node ID: ${error.nodeId}`;
+  } else if (errorType === 'duplicate-edge-id') {
+    return `Duplicate edge ID: ${error.edgeId}`;
+  } else if (errorType === 'missing-node') {
+    return `Missing node ${error.nodeId} referenced by ${error.referencedBy}`;
+  } else {
+    const _exhaustive: never = errorType;
+    return `Unknown error: ${_exhaustive}`;
+  }
+};
