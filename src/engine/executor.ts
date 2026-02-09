@@ -8,10 +8,10 @@ import type {
   WorkflowNode,
   NodeId,
   ExecutionContext,
-  ExecutionResult
-} from '../types/core';
-import { GraphValidator } from './graph-validator';
-import { TypeInferenceEngine } from './type-inference';
+  ExecutionResult,
+} from "../types/core";
+import { GraphValidator } from "./graph-validator";
+import { TypeInferenceEngine } from "./type-inference";
 
 export interface ExecutionState {
   readonly nodeOutputs: Map<string, unknown>;
@@ -30,7 +30,7 @@ export class WorkflowExecutor {
     this.state = {
       nodeOutputs: new Map(),
       executedNodes: new Set(),
-      logs: []
+      logs: [],
     };
   }
 
@@ -44,22 +44,24 @@ export class WorkflowExecutor {
       if (!validation.valid) {
         return {
           success: false,
-          error: new Error(`Graph validation failed: ${validation.errors.length} errors`),
-          logs: this.state.logs
+          error: new Error(
+            `Graph validation failed: ${validation.errors.length} errors`,
+          ),
+          logs: this.state.logs,
         };
       }
 
       // Infer types
       this.typeInference.inferTypes();
-      this.log('Type inference complete');
+      this.log("Type inference complete");
 
       // Get execution order
       const topSort = this.validator.topologicalSort();
       if (!topSort.success) {
         return {
           success: false,
-          error: new Error('Cannot execute: graph contains cycles'),
-          logs: this.state.logs
+          error: new Error("Cannot execute: graph contains cycles"),
+          logs: this.state.logs,
         };
       }
 
@@ -74,13 +76,13 @@ export class WorkflowExecutor {
       return {
         success: true,
         output: outputs,
-        logs: this.state.logs
+        logs: this.state.logs,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error : new Error(String(error)),
-        logs: this.state.logs
+        logs: this.state.logs,
       };
     }
   }
@@ -88,8 +90,11 @@ export class WorkflowExecutor {
   /**
    * Execute a single node
    */
-  private async executeNode(nodeId: NodeId, context: ExecutionContext): Promise<void> {
-    const node = this.graph.nodes.find(n => n.id === nodeId);
+  private async executeNode(
+    nodeId: NodeId,
+    context: ExecutionContext,
+  ): Promise<void> {
+    const node = this.graph.nodes.find((n) => n.id === nodeId);
     if (!node) {
       throw new Error(`Node not found: ${nodeId}`);
     }
@@ -119,7 +124,7 @@ export class WorkflowExecutor {
 
     for (const input of node.inputs) {
       const edge = this.graph.edges.find(
-        e => e.target === node.id && e.targetPort === input.id
+        (e) => e.target === node.id && e.targetPort === input.id,
       );
 
       if (edge) {
@@ -140,22 +145,22 @@ export class WorkflowExecutor {
   private async executeNodeLogic(
     node: WorkflowNode,
     inputs: Record<string, unknown>,
-    context: ExecutionContext
+    context: ExecutionContext,
   ): Promise<Record<string, unknown>> {
     // This is a simplified execution - in a real system, this would
     // delegate to node-specific executors or plugins
 
     const category = node.category;
-    
-    if (category === 'trigger') {
+
+    if (category === "trigger") {
       return this.executeTrigger(node, context);
-    } else if (category === 'logic') {
+    } else if (category === "logic") {
       return this.executeLogic(node, inputs);
-    } else if (category === 'transform') {
+    } else if (category === "transform") {
       return this.executeTransform(node, inputs);
-    } else if (category === 'effect') {
+    } else if (category === "effect") {
       return await this.executeEffect(node, inputs);
-    } else if (category === 'data') {
+    } else if (category === "data") {
       return this.executeData(node);
     } else {
       const _exhaustive: never = category;
@@ -166,13 +171,18 @@ export class WorkflowExecutor {
   /**
    * Execute trigger node
    */
-  private executeTrigger(node: WorkflowNode, context: ExecutionContext): Record<string, unknown> {
-    if (node.type === 'trigger.http') {
-      return { request: { method: 'GET', url: '/', timestamp: context.timestamp } };
-    } else if (node.type === 'trigger.timer') {
+  private executeTrigger(
+    node: WorkflowNode,
+    context: ExecutionContext,
+  ): Record<string, unknown> {
+    if (node.type === "trigger.http") {
+      return {
+        request: { method: "GET", url: "/", timestamp: context.timestamp },
+      };
+    } else if (node.type === "trigger.timer") {
       return { timestamp: context.timestamp };
-    } else if (node.type === 'trigger.manual') {
-      return { data: context.variables.get('triggerData') };
+    } else if (node.type === "trigger.manual") {
+      return { data: context.variables.get("triggerData") };
     }
     return {};
   }
@@ -180,14 +190,17 @@ export class WorkflowExecutor {
   /**
    * Execute logic node
    */
-  private executeLogic(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
-    if (node.type === 'logic.if') {
+  private executeLogic(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>,
+  ): Record<string, unknown> {
+    if (node.type === "logic.if") {
       const condition = Boolean(inputs.condition);
       return { true: condition, false: !condition };
-    } else if (node.type === 'logic.compare') {
+    } else if (node.type === "logic.compare") {
       const result = inputs.a === inputs.b;
       return { result };
-    } else if (node.type === 'logic.switch') {
+    } else if (node.type === "logic.switch") {
       // Simplified switch logic
       return { case1: true, case2: false, default: false };
     }
@@ -197,21 +210,26 @@ export class WorkflowExecutor {
   /**
    * Execute transform node
    */
-  private executeTransform(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
+  private executeTransform(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>,
+  ): Record<string, unknown> {
     const input = inputs.input;
 
-    if (node.type === 'transform.map') {
+    if (node.type === "transform.map") {
       if (Array.isArray(input)) {
         // In a real system, this would use the configured map function
-        return { output: input.map(x => x) };
+        return { output: input.map((x) => x) };
       }
-    } else if (node.type === 'transform.filter') {
+    } else if (node.type === "transform.filter") {
       if (Array.isArray(input)) {
         return { output: input.filter(() => true) };
       }
-    } else if (node.type === 'transform.reduce') {
+    } else if (node.type === "transform.reduce") {
       if (Array.isArray(input)) {
-        return { output: input.reduce((acc, x) => acc + x, inputs.initial || 0) };
+        return {
+          output: input.reduce((acc, x) => acc + x, inputs.initial || 0),
+        };
       }
     }
 
@@ -221,15 +239,18 @@ export class WorkflowExecutor {
   /**
    * Execute effect node (async)
    */
-  private async executeEffect(node: WorkflowNode, inputs: Record<string, unknown>): Promise<Record<string, unknown>> {
-    if (node.type === 'effect.http') {
+  private async executeEffect(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    if (node.type === "effect.http") {
       // Simulate HTTP request
       this.log(`HTTP Request: ${inputs.url}`);
       return { response: { status: 200, data: {} } };
-    } else if (node.type === 'effect.email') {
+    } else if (node.type === "effect.email") {
       this.log(`Email sent to: ${inputs.to}`);
       return { result: { sent: true } };
-    } else if (node.type === 'effect.db') {
+    } else if (node.type === "effect.db") {
       this.log(`DB Write: ${inputs.collection}`);
       return { result: { written: true } };
     }
@@ -240,9 +261,9 @@ export class WorkflowExecutor {
    * Execute data node
    */
   private executeData(node: WorkflowNode): Record<string, unknown> {
-    if (node.type === 'data.constant') {
+    if (node.type === "data.constant") {
       return { value: node.data?.value };
-    } else if (node.type === 'data.variable') {
+    } else if (node.type === "data.variable") {
       return { value: node.data?.variableName };
     }
     return {};
@@ -253,10 +274,10 @@ export class WorkflowExecutor {
    */
   private collectOutputs(): Record<string, unknown> {
     const outputs: Record<string, unknown> = {};
-    
+
     // Find terminal nodes
-    const terminalNodes = this.graph.nodes.filter(node => {
-      return !this.graph.edges.some(e => e.source === node.id);
+    const terminalNodes = this.graph.nodes.filter((node) => {
+      return !this.graph.edges.some((e) => e.source === node.id);
     });
 
     for (const node of terminalNodes) {
