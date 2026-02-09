@@ -19,6 +19,8 @@ import type {
   GraphValidationError
 } from '../types/graph';
 import { checkPortCompatibility } from '../types/compatibility';
+import { NodeId, EdgeId } from '../types/core';
+import { set } from 'react-hook-form';
 
 export class GraphValidator {
   private nodes: Map<NodeId, WorkflowNode>;
@@ -171,4 +173,214 @@ export class GraphValidator {
   /**
    * Check if all required inputs are satisfied
    */
-};
+  checkInputSatisfaction(): GraphValidationError[] {
+    const errors: GraphValidationError[] = [];
+
+    for (const node of this.nodes.values()) {
+      for (const input of node.inputs) {
+        if (input.required) {
+          const isConnected = Array.from(this.edges.values()).some(
+            edge => edge.target === node.id && edge.targetPort === input.id
+          );
+
+          if (!isConnected) {
+            errors.push({
+              type: 'unsatisfied-input',
+              nodeId: node.id,
+              portId: input.id
+            });
+          }
+        }
+      }
+    }
+
+    return errors;
+  }
+
+  /**
+   * Check connection validity (type compatibility)
+   */
+  checkConnectionValidity(): GraphValidationError[] {
+    const errors: GraphValidationError[] = [];
+
+    for (const edge of this.edges.values()) {
+        const sourceNode = this.nodes.get(edge.source);
+        const targetNode = this.nodes.get(edge.target);
+
+        if (!sourceNode || !targetNode) {
+            continue; // will be caguht by checkMissingNodes
+        }
+
+        const sourcePort = sourceNode.outputs.find(p => p.id === edge.source);
+        const targetPort = targetNode.inputs.find(p => p.id === edge.target);
+
+        if (!sourcePort || !targetPort) {
+            errors.push({
+                type: 'invalid-connection',
+                edgeId: edge.id as EdgeId,
+                reason: 'Port not found'
+            });
+            continue;
+        }
+
+
+        const compatibility = checkPortCompatibility(
+            sourcePort.portType,
+            targetPort.portType
+        );
+
+        if (!compatibility.valid) {
+            errors.push({
+                type: 'invalid-connection',
+                edgeId: edge.id as EdgeId,
+                reason: compatibility.errorMessage || 'type missmatch'
+            });
+        }
+    }
+
+
+    return errors;
+  }
+  /**
+   * Check for orphan nodes (no connections)
+   */
+  checkOrphanNodes(): GraphValidationError[] {
+    const errors: GraphValidationError[] = [];
+    const connectedNodes = new Set<NodeId>();
+
+    for (const edge of this.edges.values()) {
+      connectedNodes.add(edge.source);
+      connectedNodes.add(edge.target);
+    }
+
+    for (const nodeId of this.nodes.keys()) {
+      if (!connectedNodes.has(nodeId) && this.nodes.size > 1) {
+        errors.push({
+          type: 'orphan-node',
+          nodeId
+        });
+      }
+    }
+
+    return errors;
+  }
+/**
+   * Check for duplicate node IDs
+   */
+  private checkDuplicateIds(): GraphValidationError[] {
+    const errors: GraphValidationError[] = [];
+    const nodeIds = new Set<NodeId>();
+    const edgeIds = new Set<EdgeId>();
+
+    for (const node of this.graph.nodes) {
+      if (nodeIds.has(node.id)) {
+        errors.push({
+          type: 'duplicate-node-id',
+          nodeId: node.id
+        });
+      }
+      nodeIds.add(node.id);
+    }
+
+    for (const edge of this.graph.edges) {
+      if (edgeIds.has(edge.id as EdgeId)) {
+        errors.push({
+          type: 'duplicate-edge-id',
+          edgeId: edge.id as EdgeId
+        });
+      }
+      edgeIds.add(edge.id as EdgeId);
+    }
+
+    return errors;
+  }
+
+  /**
+   * Check for missing nodes referenced in edges
+   */
+  private checkMissingNodes(): GraphValidationError[] {
+    const errors: GraphValidationError[] = [];
+
+    for (const edge of this.edges.values()) {
+      if (!this.nodes.has(edge.source)) {
+        errors.push({
+          type: 'missing-node',
+          nodeId: edge.source,
+          referencedBy: edge.id as EdgeId
+        });
+      }
+      if (!this.nodes.has(edge.target)) {
+        errors.push({
+          type: 'missing-node',
+          nodeId: edge.target,
+          referencedBy: edge.id as EdgeId
+        });
+      }
+    }
+
+    return errors;
+  }
+
+  /**
+   * Build adjacency list for graph traversal
+   */
+  private buildAdjacencyList(): Map<NodeId, NodeId[]> {
+    const adjacencyList = new Map<NodeId, NodeId[]>();
+
+    for (const nodeId of this.nodes.keys()) {
+      adjacencyList.set(nodeId, []);
+    }
+
+    for (const edge of this.edges.values()) {
+      const neighbors = adjacencyList.get(edge.source) || [];
+      neighbors.push(edge.target);
+      adjacencyList.set(edge.source, neighbors);
+    }
+
+    return adjacencyList;
+  }
+
+  /**
+   * Build reverse adjacency list
+   */
+  private buildReverseAdjacencyList(): Map<NodeId, NodeId[]> {
+    const reverseList = new Map<NodeId, NodeId[]>();
+
+    for (const nodeId of this.nodes.keys()) {
+      reverseList.set(nodeId, []);
+    }
+
+    for (const edge of this.edges.values()) {
+      const predecessors = reverseList.get(edge.target) || [];
+      predecessors.push(edge.source);
+      reverseList.set(edge.target, predecessors);
+    }
+
+    return reverseList;
+  }
+
+  /**
+   * Get validation state
+   */
+  getValidationState(): GraphValidationState {
+    const topSort = this.topologicalSort();
+
+    return {
+      nodes: this.nodes,
+      edges: this.edges,
+      adjacencyList: new Map(
+        Array.from(this.adjacencyList.entries()).map(([k, v]) => [k, v as readonly NodeId[]])
+      ),
+      reverseAdjacencyList: new Map(
+        Array.from(this.reverseAdjacencyList.entries()).map(([k, v]) => [k, v as readonly NodeId[]])
+      ),
+      inputSatisfaction: new Map(),
+      cycles: [],
+      topologicalOrder: topSort.success ? topSort.order : null
+    };
+  }
+}
+
+/**
+ * Exhaustiveness check for validation errors
+ */
