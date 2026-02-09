@@ -8,9 +8,9 @@ import type {
   WorkflowNode,
   Edge,
   NodeId,
-  PortType
-} from '../types/core';
-import { GraphValidator } from './graph-validator';
+  PortType,
+} from "../types/core";
+import { GraphValidator } from "./graph-validator";
 
 export interface InferredType {
   readonly nodeId: NodeId;
@@ -40,7 +40,7 @@ export class TypeInferenceEngine {
     // Get topological order
     const topSort = this.validator.topologicalSort();
     if (!topSort.success) {
-      throw new Error('Cannot infer types: graph contains cycles');
+      throw new Error("Cannot infer types: graph contains cycles");
     }
 
     // Process nodes in topological order
@@ -55,18 +55,18 @@ export class TypeInferenceEngine {
    * Infer types for a specific node
    */
   private inferNodeTypes(nodeId: NodeId): void {
-    const node = this.graph.nodes.find(n => n.id === nodeId);
+    const node = this.graph.nodes.find((n) => n.id === nodeId);
     if (!node) return;
 
     // Infer output types based on node type and inputs
     for (const output of node.outputs) {
       const key = this.makeKey(nodeId, output.id);
-      
+
       // For most nodes, output type is defined by the node itself
       this.inferredTypes.set(key, {
         nodeId,
         portId: output.id,
-        portType: output.portType
+        portType: output.portType,
       });
     }
 
@@ -78,12 +78,14 @@ export class TypeInferenceEngine {
    * Propagate types through connections
    */
   private propagateTypes(sourceNodeId: NodeId): void {
-    const outgoingEdges = this.graph.edges.filter(e => e.source === sourceNodeId);
+    const outgoingEdges = this.graph.edges.filter(
+      (e) => e.source === sourceNodeId,
+    );
 
     for (const edge of outgoingEdges) {
       const sourceKey = this.makeKey(edge.source, edge.sourcePort);
       const targetKey = this.makeKey(edge.target, edge.targetPort);
-      
+
       const sourceType = this.inferredTypes.get(sourceKey);
       if (sourceType) {
         this.inferredTypes.set(targetKey, {
@@ -92,8 +94,8 @@ export class TypeInferenceEngine {
           portType: sourceType.portType,
           inferredFrom: {
             nodeId: edge.source,
-            portId: edge.sourcePort
-          }
+            portId: edge.sourcePort,
+          },
         });
       }
     }
@@ -111,7 +113,7 @@ export class TypeInferenceEngine {
    */
   getNodeInferredTypes(nodeId: NodeId): InferredType[] {
     return Array.from(this.inferredTypes.values()).filter(
-      t => t.nodeId === nodeId
+      (t) => t.nodeId === nodeId,
     );
   }
 
@@ -122,8 +124,8 @@ export class TypeInferenceEngine {
     const outputTypes: PortType[] = [];
 
     // Find terminal nodes (nodes with no outgoing edges)
-    const terminalNodes = this.graph.nodes.filter(node => {
-      return !this.graph.edges.some(e => e.source === node.id);
+    const terminalNodes = this.graph.nodes.filter((node) => {
+      return !this.graph.edges.some((e) => e.source === node.id);
     });
 
     for (const node of terminalNodes) {
@@ -180,7 +182,7 @@ export class TypeInferenceEngine {
       complete: missingInferences.length === 0,
       totalPorts,
       inferredPorts: this.inferredTypes.size,
-      missingInferences
+      missingInferences,
     };
   }
 
@@ -198,8 +200,8 @@ export class TypeUnifier {
    */
   unify(type1: PortType, type2: PortType): PortType | null {
     // If either is 'any', return the other
-    if (type1.kind === 'any') return type2;
-    if (type2.kind === 'any') return type1;
+    if (type1.kind === "any") return type2;
+    if (type2.kind === "any") return type1;
 
     // If same kind, return either
     if (type1.kind === type2.kind) {
@@ -215,7 +217,7 @@ export class TypeUnifier {
    */
   leastUpperBound(types: PortType[]): PortType {
     if (types.length === 0) {
-      return { kind: 'any', type: undefined };
+      return { kind: "any", type: undefined };
     }
 
     if (types.length === 1) {
@@ -224,11 +226,11 @@ export class TypeUnifier {
 
     // Check if all types are the same
     const firstKind = types[0].kind;
-    if (types.every(t => t.kind === firstKind)) {
+    if (types.every((t) => t.kind === firstKind)) {
       return types[0];
     }
 
     // Otherwise, return 'any' as the most general type
-    return { kind: 'any', type: undefined };
+    return { kind: "any", type: undefined };
   }
 }
