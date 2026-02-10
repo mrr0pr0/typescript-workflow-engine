@@ -49,7 +49,9 @@ export class PluginManager implements PluginRegistry {
       if (!this.capabilityIndex.has(capability)) {
         this.capabilityIndex.set(capability, new Set());
       }
-      this.capabilityIndex.get(capability)!.add(plugin.metadata.id);
+      const set = this.capabilityIndex.get(capability) || new Set<string>();
+      set.add(plugin.metadata.id);
+      this.capabilityIndex.set(capability, set);
     }
 
     console.log(

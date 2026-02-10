@@ -45,7 +45,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       ...prev,
       nodes: [...prev.nodes, node],
       metadata: {
-        ...prev.metadata!,
+        ...(prev.metadata || {}),
         updatedAt: new Date().toISOString(),
       },
     }));
@@ -60,7 +60,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
         (e) => e.source !== nodeId && e.target !== nodeId,
       ),
       metadata: {
-        ...prev.metadata!,
+        ...(prev.metadata || {}),
         updatedAt: new Date().toISOString(),
       },
     }));
@@ -75,7 +75,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
           n.id === nodeId ? { ...n, ...updates } : n,
         ),
         metadata: {
-          ...prev.metadata!,
+          ...(prev.metadata || {}),
           updatedAt: new Date().toISOString(),
         },
       }));
@@ -89,7 +89,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       ...prev,
       edges: [...prev.edges, edge],
       metadata: {
-        ...prev.metadata!,
+        ...(prev.metadata || {}),
         updatedAt: new Date().toISOString(),
       },
     }));
@@ -101,7 +101,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       ...prev,
       edges: prev.edges.filter((e) => e.id !== edgeId),
       metadata: {
-        ...prev.metadata!,
+        ...(prev.metadata || {}),
         updatedAt: new Date().toISOString(),
       },
     }));

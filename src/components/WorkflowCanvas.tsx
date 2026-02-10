@@ -108,9 +108,9 @@ export const WorkflowCanvas = ({
       const newEdge: Edge = {
         id: createEdgeId(`edge-${Date.now()}`),
         source: connection.source as NodeId,
-        sourcePort: connection.sourceHandle!,
+        sourcePort: sourcePort.id,
         target: connection.target as NodeId,
-        targetPort: connection.targetHandle!,
+        targetPort: targetPort.id,
         valid: compatibility.valid,
         errorMessage: compatibility.errorMessage,
       };
@@ -141,16 +141,18 @@ export const WorkflowCanvas = ({
       onNodesChangeInternal(changes);
 
       // Update positions in our graph
-      const updatedNodes = nodes.map((node) => {
-        const graphNode = graph.nodes.find((n) => n.id === node.id);
-        if (graphNode) {
-          return {
-            ...graphNode,
-            position: node.position,
-          };
-        }
-        return graphNode!;
-      });
+      const updatedNodes = nodes
+        .map((node) => {
+          const graphNode = graph.nodes.find((n) => n.id === node.id);
+          if (graphNode) {
+            return {
+              ...graphNode,
+              position: node.position,
+            };
+          }
+          return undefined;
+        })
+        .filter((n): n is WorkflowNode => !!n);
 
       onNodesChange(updatedNodes);
     },
