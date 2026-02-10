@@ -9,6 +9,7 @@ import type {
   InputPort,
   OutputPort,
   NodeId,
+  WorkflowGraph,
 } from "./core";
 
 // Plugin metadata
@@ -66,7 +67,7 @@ export interface CustomNodeDefinition {
 
 // Validator plugin
 export interface ValidatorPlugin extends Plugin<"validator"> {
-  validate(graph: any): Promise<ValidationResult>;
+  validate(graph: WorkflowGraph): Promise<ValidationResult>;
 }
 
 interface ValidationResult {
@@ -91,7 +92,7 @@ export interface TransformerPlugin extends Plugin<"transformer"> {
 // UI extension plugin
 export interface UIExtensionPlugin extends Plugin<"ui-extension"> {
   readonly componentName: string;
-  renderComponent(): React.ComponentType<any>;
+  renderComponent(): React.ComponentType<Record<string, unknown>>;
 }
 
 // Plugin registry with type safety

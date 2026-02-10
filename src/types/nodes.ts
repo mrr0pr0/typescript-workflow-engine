@@ -507,6 +507,6 @@ export const nodeFactories = {
   "effect.db": createDbEffectNode,
   "data.constant": createConstantDataNode,
   "data.variable": createVariableDataNode,
-} as const satisfies Record<string, (...args: any[]) => any>;
+} as const satisfies Record<string, (...args: unknown[]) => unknown>;
 
 export type NodeFactoryType = keyof typeof nodeFactories;
