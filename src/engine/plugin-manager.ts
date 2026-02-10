@@ -95,7 +95,7 @@ export class PluginManager implements PluginRegistry {
 
     for (const id of pluginIds) {
       const plugin = this.plugins.get(id);
-      if (plugin && plugin.capabilities.includes(capability)) {
+      if (plugin?.capabilities.includes(capability)) {
         plugins.push(plugin as Plugin<C>);
       }
     }
