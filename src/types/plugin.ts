@@ -112,7 +112,7 @@ declare module "./core" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface NodeTypeRegistry {
     // Plugins can augment this interface to add their node types
-    // This is intentionally empty to allow module augmentation
+    [key: string]: unknown;
   }
 }
 
