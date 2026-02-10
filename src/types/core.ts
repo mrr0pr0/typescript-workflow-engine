@@ -191,11 +191,11 @@ export const isDataNode = (node: WorkflowNode): node is DataNode =>
 
 // Utility type for extracting input types from a node
 export type NodeInputs<T extends WorkflowNode> =
-  T extends BaseNode<infer I, any> ? I : never;
+  T extends BaseNode<infer I, Record<string, unknown>> ? I : never;
 
 // Utility type for extracting output types from a node
 export type NodeOutputs<T extends WorkflowNode> =
-  T extends BaseNode<any, infer O> ? O : never;
+  T extends BaseNode<Record<string, unknown>, infer O> ? O : never;
 
 // Readonly deep utility type
 export type DeepReadonly<T> = {

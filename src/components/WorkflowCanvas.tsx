@@ -10,7 +10,8 @@ import {
   Connection,
   Node,
   Edge as FlowEdge,
-  NodeTypes
+  NodeTypes,
+  type NodeChange
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { NodeRenderer } from './NodeRenderer';
@@ -123,7 +124,7 @@ export const WorkflowCanvas = ({
 
   // Handle node position change
   const handleNodesChange = useCallback(
-    (changes: any) => {
+    (changes: NodeChange<Node>[]) => {
       onNodesChangeInternal(changes);
       
       // Update positions in our graph

@@ -4,12 +4,13 @@ import { Badge } from './ui/badge';
 import { Alert, AlertDescription } from './ui/alert';
 import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import type { WorkflowGraph } from '../types/core';
+import type { InferredType } from '../engine/type-inference';
 import { getPortTypeColor, getPortTypeLabel } from '../utils/type-helpers';
 
 interface TypeInspectorProps {
   graph: WorkflowGraph;
   validationErrors: string[];
-  inferredTypes: Map<string, any>;
+  inferredTypes: Map<string, InferredType>;
 }
 
 export const TypeInspector = ({
