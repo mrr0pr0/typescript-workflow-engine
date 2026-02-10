@@ -152,7 +152,7 @@ export const WorkflowCanvas = ({
           }
           return undefined;
         })
-        .filter((n): n is WorkflowNode => !!n);
+        .filter((n): n is WorkflowNode => Boolean(n));
 
       onNodesChange(updatedNodes);
     },
