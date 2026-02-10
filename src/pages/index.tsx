@@ -3,6 +3,7 @@ import { WorkflowCanvas } from '../components/WorkflowCanvas';
 import { NodePalette } from '../components/NodePalette';
 import { TypeInspector } from '../components/TypeInspector';
 import { Button } from '../components/ui/button';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogTrigger } from '../components/ui/alert-dialog';
 import { useWorkflowGraph } from '../hooks/useWorkflowGraph';
 import { nodeFactories, type NodeFactoryType } from '../types/nodes';
 import { createNodeId } from '../types/core';
@@ -127,13 +128,11 @@ export default function Index() {
   }, [graph, validateGraph, toast]);
 
   const handleClear = useCallback(() => {
-    if (confirm('Are you sure you want to clear the workflow?')) {
-      clearGraph();
-      toast({
-        title: 'Workflow Cleared',
-        description: 'All nodes and edges have been removed'
-      });
-    }
+    clearGraph();
+    toast({
+      title: 'Workflow Cleared',
+      description: 'All nodes and edges have been removed'
+    });
   }, [clearGraph, toast]);
 
   return (
@@ -176,15 +175,32 @@ export default function Index() {
             <Play className="w-4 h-4 mr-2" />
             {isExecuting ? 'Executing...' : 'Execute'}
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClear}
-            className="bg-slate-700 border-slate-600 hover:bg-slate-600"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Clear
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-slate-700 border-slate-600 hover:bg-slate-600"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear workflow?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will remove all nodes and edges from the current workflow. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleClear}>
+                  Yes, clear workflow
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </header>
 
