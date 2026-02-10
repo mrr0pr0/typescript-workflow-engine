@@ -21,7 +21,7 @@ export type PortType =
   | { kind: "boolean"; type: boolean }
   | { kind: "object"; type: Record<string, unknown> }
   | { kind: "array"; type: unknown[] }
-  | { kind: "void"; type: void }
+  | { kind: "void"; type: undefined }
   | { kind: "custom"; type: unknown; typeName: string };
 
 // Port definition with generic type parameter
