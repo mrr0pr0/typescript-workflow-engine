@@ -140,7 +140,8 @@ export class GraphValidator {
 
     // Process nodes
     while (queue.length > 0) {
-      const nodeId = queue.shift()!;
+      const nodeId = queue.shift();
+      if (nodeId === undefined) break;
       result.push(nodeId);
 
       const neighbors = this.adjacencyList.get(nodeId) || [];
