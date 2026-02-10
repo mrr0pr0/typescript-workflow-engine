@@ -10,8 +10,8 @@ import type {
   PluginRegistry,
   NodeProviderPlugin,
   ValidatorPlugin,
-  ExecutorPlugin
-} from '../types/plugin';
+  ExecutorPlugin,
+} from "../types/plugin";
 
 export class PluginManager implements PluginRegistry {
   readonly plugins: Map<string, Plugin>;
@@ -33,8 +33,11 @@ export class PluginManager implements PluginRegistry {
     // Initialize plugin
     const initResult = plugin.initialize();
     if (initResult instanceof Promise) {
-      initResult.catch(err => {
-        console.error(`Failed to initialize plugin ${plugin.metadata.id}:`, err);
+      initResult.catch((err) => {
+        console.error(
+          `Failed to initialize plugin ${plugin.metadata.id}:`,
+          err,
+        );
       });
     }
 
@@ -49,7 +52,9 @@ export class PluginManager implements PluginRegistry {
       this.capabilityIndex.get(capability)!.add(plugin.metadata.id);
     }
 
-    console.log(`Plugin registered: ${plugin.metadata.name} v${plugin.metadata.version}`);
+    console.log(
+      `Plugin registered: ${plugin.metadata.name} v${plugin.metadata.version}`,
+    );
   }
 
   /**
@@ -64,7 +69,7 @@ export class PluginManager implements PluginRegistry {
     // Cleanup plugin
     const cleanupResult = plugin.cleanup();
     if (cleanupResult instanceof Promise) {
-      cleanupResult.catch(err => {
+      cleanupResult.catch((err) => {
         console.error(`Failed to cleanup plugin ${pluginId}:`, err);
       });
     }
@@ -89,13 +94,15 @@ export class PluginManager implements PluginRegistry {
   /**
    * Get all plugins with a specific capability
    */
-  getByCapability<C extends PluginCapability>(capability: C): ReadonlyArray<Plugin<C>> {
+  getByCapability<C extends PluginCapability>(
+    capability: C,
+  ): ReadonlyArray<Plugin<C>> {
     const pluginIds = this.capabilityIndex.get(capability) || new Set();
     const plugins: Plugin<C>[] = [];
 
     for (const id of pluginIds) {
       const plugin = this.plugins.get(id);
-      if (plugin && plugin.capabilities.includes(capability)) {
+      if (plugin?.capabilities.includes(capability)) {
         plugins.push(plugin as Plugin<C>);
       }
     }
@@ -127,10 +134,13 @@ export class PluginManager implements PluginRegistry {
   /**
    * List all plugins with their capabilities
    */
-  listPlugins(): Array<{ metadata: PluginMetadata; capabilities: ReadonlyArray<PluginCapability> }> {
-    return Array.from(this.plugins.values()).map(plugin => ({
+  listPlugins(): Array<{
+    metadata: PluginMetadata;
+    capabilities: ReadonlyArray<PluginCapability>;
+  }> {
+    return Array.from(this.plugins.values()).map((plugin) => ({
       metadata: plugin.metadata,
-      capabilities: plugin.capabilities
+      capabilities: plugin.capabilities,
     }));
   }
 
