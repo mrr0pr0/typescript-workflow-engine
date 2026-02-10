@@ -14,7 +14,10 @@ import type {
 } from "../types/core";
 import { createNodeId, createEdgeId, createWorkflowId } from "../types/core";
 import { GraphValidator } from "../engine/graph-validator";
-import { TypeInferenceEngine, type InferredType } from "../engine/type-inference";
+import {
+  TypeInferenceEngine,
+  type InferredType,
+} from "../engine/type-inference";
 
 export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
   const [graph, setGraph] = useState<WorkflowGraph>(
