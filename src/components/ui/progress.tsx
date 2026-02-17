@@ -2,15 +2,15 @@
 
 import { forwardRef } from "react"
 import type { ElementRef, ComponentPropsWithoutRef } from "react"
-import * as ProgressPrimitive from "@radix-ui/react-progress"
+import { Root, Indicator } from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
 const Progress = forwardRef<
-  ElementRef<typeof ProgressPrimitive.Root>,
-  ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+  ElementRef<typeof Root>,
+  ComponentPropsWithoutRef<typeof Root>
 >(({ className, value, ...props }, ref) => (
-  <ProgressPrimitive.Root
+  <Root
     ref={ref}
     className={cn(
       "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
@@ -18,12 +18,12 @@ const Progress = forwardRef<
     )}
     {...props}
   >
-    <ProgressPrimitive.Indicator
+    <Indicator
       className="h-full w-full flex-1 bg-primary transition-all"
       style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
     />
-  </ProgressPrimitive.Root>
+  </Root>
 ))
-Progress.displayName = ProgressPrimitive.Root.displayName
+Progress.displayName = Root.displayName
 
 export { Progress }

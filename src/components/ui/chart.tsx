@@ -1,6 +1,7 @@
 import { createContext, useContext, forwardRef, useId, useMemo } from "react"
 import type { ReactNode, ComponentType, ComponentProps, CSSProperties } from "react"
-import * as RechartsPrimitive from "recharts"
+import { ResponsiveContainer, Tooltip, Legend } from "recharts"
+import type { TooltipProps, LegendProps } from "recharts"
 
 import { cn } from "@/lib/utils"
 
@@ -38,7 +39,7 @@ const ChartContainer = forwardRef<
   ComponentProps<"div"> & {
     config: ChartConfig
     children: ComponentProps<
-      typeof RechartsPrimitive.ResponsiveContainer
+      typeof ResponsiveContainer
     >["children"]
   }
 >(({ id, className, children, config, ...props }, ref) => {
@@ -57,9 +58,9 @@ const ChartContainer = forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
+        <ResponsiveContainer>
           {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        </ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   )
@@ -99,11 +100,11 @@ ${colorConfig
   )
 }
 
-const ChartTooltip = RechartsPrimitive.Tooltip
+const ChartTooltip = Tooltip
 
 const ChartTooltipContent = forwardRef<
   HTMLDivElement,
-  ComponentProps<typeof RechartsPrimitive.Tooltip> &
+  ComponentProps<typeof Tooltip> &
     ComponentProps<"div"> & {
       hideLabel?: boolean
       hideIndicator?: boolean
@@ -257,12 +258,12 @@ const ChartTooltipContent = forwardRef<
 )
 ChartTooltipContent.displayName = "ChartTooltip"
 
-const ChartLegend = RechartsPrimitive.Legend
+const ChartLegend = Legend
 
 const ChartLegendContent = forwardRef<
   HTMLDivElement,
   ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+    Pick<LegendProps, "payload" | "verticalAlign"> & {
       hideIcon?: boolean
       nameKey?: string
     }
