@@ -1,4 +1,4 @@
-import * as React from "react"
+import type { ComponentProps } from "react"
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -18,8 +18,8 @@ function Calendar({
   formatters,
   components,
   ...props
-}: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>["variant"]
+}: ComponentProps<typeof DayPicker> & {
+  buttonVariant?: ComponentProps<typeof Button>["variant"]
 }) {
   const defaultClassNames = getDefaultClassNames()
 
