@@ -23,10 +23,12 @@ export interface InferredType {
 }
 
 export class TypeInferenceEngine {
+  private graph: WorkflowGraph;
   private validator: GraphValidator;
   private inferredTypes: Map<string, InferredType>;
 
-  constructor(private graph: WorkflowGraph) {
+  constructor(graph: WorkflowGraph) {
+    this.graph = graph;
     this.validator = new GraphValidator(graph);
     this.inferredTypes = new Map();
   }
@@ -60,8 +62,8 @@ export class TypeInferenceEngine {
 
     // Infer output types based on node type and inputs
     for (const output of node.outputs) {
-      const key = this.makeKey(nodeId, output.id);
-      
+      const key = TypeInferenceEngine.makeKey(nodeId, output.id);
+
       // For most nodes, output type is defined by the node itself
       this.inferredTypes.set(key, {
         nodeId,
@@ -81,9 +83,9 @@ export class TypeInferenceEngine {
     const outgoingEdges = this.graph.edges.filter(e => e.source === sourceNodeId);
 
     for (const edge of outgoingEdges) {
-      const sourceKey = this.makeKey(edge.source, edge.sourcePort);
-      const targetKey = this.makeKey(edge.target, edge.targetPort);
-      
+      const sourceKey = TypeInferenceEngine.makeKey(edge.source, edge.sourcePort);
+      const targetKey = TypeInferenceEngine.makeKey(edge.target, edge.targetPort);
+
       const sourceType = this.inferredTypes.get(sourceKey);
       if (sourceType) {
         this.inferredTypes.set(targetKey, {
@@ -103,7 +105,7 @@ export class TypeInferenceEngine {
    * Get inferred type for a specific port
    */
   getInferredType(nodeId: NodeId, portId: string): InferredType | undefined {
-    return this.inferredTypes.get(this.makeKey(nodeId, portId));
+    return this.inferredTypes.get(TypeInferenceEngine.makeKey(nodeId, portId));
   }
 
   /**
@@ -184,7 +186,7 @@ export class TypeInferenceEngine {
     };
   }
 
-  private makeKey(nodeId: NodeId, portId: string): string {
+  private static makeKey(nodeId: NodeId, portId: string): string {
     return `${nodeId}:${portId}`;
   }
 }
@@ -196,7 +198,7 @@ export class TypeUnifier {
   /**
    * Unify two types and find the most specific common type
    */
-  unify(type1: PortType, type2: PortType): PortType | null {
+  static unify(type1: PortType, type2: PortType): PortType | null {
     // If either is 'any', return the other
     if (type1.kind === 'any') return type2;
     if (type2.kind === 'any') return type1;
@@ -213,7 +215,7 @@ export class TypeUnifier {
   /**
    * Find the least upper bound (most general type) of multiple types
    */
-  leastUpperBound(types: PortType[]): PortType {
+  static leastUpperBound(types: PortType[]): PortType {
     if (types.length === 0) {
       return { kind: 'any', type: undefined };
     }
