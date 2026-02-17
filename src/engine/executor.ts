@@ -19,11 +19,13 @@ export interface ExecutionState {
 }
 
 export class WorkflowExecutor {
+  private graph: WorkflowGraph;
   private validator: GraphValidator;
   private typeInference: TypeInferenceEngine;
   private state: ExecutionState;
 
-  constructor(private graph: WorkflowGraph) {
+  constructor(graph: WorkflowGraph) {
+    this.graph = graph;
     this.validator = new GraphValidator(graph);
     this.typeInference = new TypeInferenceEngine(graph);
     this.state = {
@@ -103,7 +105,7 @@ export class WorkflowExecutor {
 
     // Store outputs
     for (const [portId, value] of Object.entries(outputs)) {
-      this.state.nodeOutputs.set(this.makeKey(nodeId, portId), value);
+      this.state.nodeOutputs.set(WorkflowExecutor.makeKey(nodeId, portId), value);
     }
 
     this.state.executedNodes.add(nodeId);
@@ -122,7 +124,7 @@ export class WorkflowExecutor {
       );
 
       if (edge) {
-        const key = this.makeKey(edge.source, edge.sourcePort);
+        const key = WorkflowExecutor.makeKey(edge.source, edge.sourcePort);
         const value = this.state.nodeOutputs.get(key);
         inputs[input.id] = value;
       } else if (input.required) {
@@ -145,17 +147,17 @@ export class WorkflowExecutor {
     // delegate to node-specific executors or plugins
 
     const category = node.category;
-    
+
     if (category === 'trigger') {
-      return this.executeTrigger(node, context);
+      return WorkflowExecutor.executeTrigger(node, context);
     } else if (category === 'logic') {
-      return this.executeLogic(node, inputs);
+      return WorkflowExecutor.executeLogic(node, inputs);
     } else if (category === 'transform') {
-      return this.executeTransform(node, inputs);
+      return WorkflowExecutor.executeTransform(node, inputs);
     } else if (category === 'effect') {
       return await this.executeEffect(node, inputs);
     } else if (category === 'data') {
-      return this.executeData(node);
+      return WorkflowExecutor.executeData(node);
     } else {
       const _exhaustive: never = category;
       throw new Error(`Unknown node category: ${_exhaustive}`);
@@ -165,7 +167,7 @@ export class WorkflowExecutor {
   /**
    * Execute trigger node
    */
-  private executeTrigger(node: WorkflowNode, context: ExecutionContext): Record<string, unknown> {
+  private static executeTrigger(node: WorkflowNode, context: ExecutionContext): Record<string, unknown> {
     if (node.type === 'trigger.http') {
       return { request: { method: 'GET', url: '/', timestamp: context.timestamp } };
     } else if (node.type === 'trigger.timer') {
@@ -179,7 +181,7 @@ export class WorkflowExecutor {
   /**
    * Execute logic node
    */
-  private executeLogic(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
+  private static executeLogic(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
     if (node.type === 'logic.if') {
       const condition = Boolean(inputs.condition);
       return { true: condition, false: !condition };
@@ -196,7 +198,7 @@ export class WorkflowExecutor {
   /**
    * Execute transform node
    */
-  private executeTransform(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
+  private static executeTransform(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
     const input = inputs.input;
 
     if (node.type === 'transform.map') {
@@ -218,7 +220,7 @@ export class WorkflowExecutor {
   }
 
   /**
-   * Execute effect node (async)
+   * Execute effect node (async) — uses `this.log`, so remains an instance method
    */
   private async executeEffect(node: WorkflowNode, inputs: Record<string, unknown>): Promise<Record<string, unknown>> {
     if (node.type === 'effect.http') {
@@ -238,7 +240,7 @@ export class WorkflowExecutor {
   /**
    * Execute data node
    */
-  private executeData(node: WorkflowNode): Record<string, unknown> {
+  private static executeData(node: WorkflowNode): Record<string, unknown> {
     if (node.type === 'data.constant') {
       return { value: node.data?.value };
     } else if (node.type === 'data.variable') {
@@ -252,8 +254,8 @@ export class WorkflowExecutor {
    */
   private collectOutputs(): Record<string, unknown> {
     const outputs: Record<string, unknown> = {};
-    
-    // Find terminal nodes
+
+    // Find terminal nodes (nodes with no outgoing edges)
     const terminalNodes = this.graph.nodes.filter(node => {
       return !this.graph.edges.some(e => e.source === node.id);
     });
@@ -261,7 +263,7 @@ export class WorkflowExecutor {
     for (const node of terminalNodes) {
       const nodeOutputs: Record<string, unknown> = {};
       for (const output of node.outputs) {
-        const key = this.makeKey(node.id, output.id);
+        const key = WorkflowExecutor.makeKey(node.id, output.id);
         nodeOutputs[output.id] = this.state.nodeOutputs.get(key);
       }
       outputs[node.id] = nodeOutputs;
@@ -274,7 +276,7 @@ export class WorkflowExecutor {
     this.state.logs.push(`[${new Date().toISOString()}] ${message}`);
   }
 
-  private makeKey(nodeId: NodeId, portId: string): string {
+  private static makeKey(nodeId: NodeId, portId: string): string {
     return `${nodeId}:${portId}`;
   }
 
