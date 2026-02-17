@@ -192,45 +192,40 @@ export class TypeInferenceEngine {
 }
 
 /**
- * Type unification for generic types
+ * Unify two types and find the most specific common type
  */
-export class TypeUnifier {
-  /**
-   * Unify two types and find the most specific common type
-   */
-  static unify(type1: PortType, type2: PortType): PortType | null {
-    // If either is 'any', return the other
-    if (type1.kind === 'any') return type2;
-    if (type2.kind === 'any') return type1;
+export function unifyTypes(type1: PortType, type2: PortType): PortType | null {
+  // If either is 'any', return the other
+  if (type1.kind === 'any') return type2;
+  if (type2.kind === 'any') return type1;
 
-    // If same kind, return either
-    if (type1.kind === type2.kind) {
-      return type1;
-    }
-
-    // No unification possible
-    return null;
+  // If same kind, return either
+  if (type1.kind === type2.kind) {
+    return type1;
   }
 
-  /**
-   * Find the least upper bound (most general type) of multiple types
-   */
-  static leastUpperBound(types: PortType[]): PortType {
-    if (types.length === 0) {
-      return { kind: 'any', type: undefined };
-    }
+  // No unification possible
+  return null;
+}
 
-    if (types.length === 1) {
-      return types[0];
-    }
-
-    // Check if all types are the same
-    const firstKind = types[0].kind;
-    if (types.every(t => t.kind === firstKind)) {
-      return types[0];
-    }
-
-    // Otherwise, return 'any' as the most general type
+/**
+ * Find the least upper bound (most general type) of multiple types
+ */
+export function leastUpperBound(types: PortType[]): PortType {
+  if (types.length === 0) {
     return { kind: 'any', type: undefined };
   }
+
+  if (types.length === 1) {
+    return types[0];
+  }
+
+  // Check if all types are the same
+  const firstKind = types[0].kind;
+  if (types.every(t => t.kind === firstKind)) {
+    return types[0];
+  }
+
+  // Otherwise, return 'any' as the most general type
+  return { kind: 'any', type: undefined };
 }
