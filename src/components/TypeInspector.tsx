@@ -26,6 +26,49 @@ const TS_FEATURES = [
   "Phantom Types",
 ];
 
+// --- Leaf components first ---
+
+interface StatCellProps {
+  label: string;
+  value: number;
+  valueClassName?: string;
+}
+
+const StatCell = ({ label, value, valueClassName = "text-slate-100" }: StatCellProps) => (
+  <div className="bg-slate-700 p-2 rounded">
+    <div className="text-slate-400">{label}</div>
+    <div className={`text-lg font-bold ${valueClassName}`}>{value}</div>
+  </div>
+);
+
+interface InferredTypeEntryProps {
+  entryKey: string;
+  type: InferredType;
+}
+
+const InferredTypeEntry = ({ entryKey, type }: InferredTypeEntryProps) => (
+  <div className="bg-slate-700 p-2 rounded text-xs space-y-1">
+    <div className="font-mono text-slate-300">{entryKey}</div>
+    <Badge
+      variant="outline"
+      className="text-[10px]"
+      style={{
+        borderColor: getPortTypeColor(type.portType),
+        color: getPortTypeColor(type.portType),
+      }}
+    >
+      {getPortTypeLabel(type.portType)}
+    </Badge>
+    {type.inferredFrom && (
+      <div className="text-slate-400 text-[10px]">
+        ← from {type.inferredFrom.nodeId}:{type.inferredFrom.portId}
+      </div>
+    )}
+  </div>
+);
+
+// --- Composite components (depend on leaves above) ---
+
 interface GraphStatsProps {
   nodeCount: number;
   edgeCount: number;
@@ -42,19 +85,6 @@ const GraphStats = ({ nodeCount, edgeCount, typeCount, errorCount }: GraphStatsP
       <StatCell label="Inferred Types" value={typeCount} />
       <StatCell label="Errors" value={errorCount} valueClassName="text-red-400" />
     </div>
-  </div>
-);
-
-interface StatCellProps {
-  label: string;
-  value: number;
-  valueClassName?: string;
-}
-
-const StatCell = ({ label, value, valueClassName = "text-slate-100" }: StatCellProps) => (
-  <div className="bg-slate-700 p-2 rounded">
-    <div className="text-slate-400">{label}</div>
-    <div className={`text-lg font-bold ${valueClassName}`}>{value}</div>
   </div>
 );
 
@@ -91,32 +121,6 @@ const InferredTypesList = ({ inferredTypes }: InferredTypesListProps) => (
   </div>
 );
 
-interface InferredTypeEntryProps {
-  entryKey: string;
-  type: InferredType;
-}
-
-const InferredTypeEntry = ({ entryKey, type }: InferredTypeEntryProps) => (
-  <div className="bg-slate-700 p-2 rounded text-xs space-y-1">
-    <div className="font-mono text-slate-300">{entryKey}</div>
-    <Badge
-      variant="outline"
-      className="text-[10px]"
-      style={{
-        borderColor: getPortTypeColor(type.portType),
-        color: getPortTypeColor(type.portType),
-      }}
-    >
-      {getPortTypeLabel(type.portType)}
-    </Badge>
-    {type.inferredFrom && (
-      <div className="text-slate-400 text-[10px]">
-        ← from {type.inferredFrom.nodeId}:{type.inferredFrom.portId}
-      </div>
-    )}
-  </div>
-);
-
 const TsFeaturesBadges = () => (
   <div className="space-y-2">
     <h3 className="text-sm font-semibold text-slate-200">TS Features Used</h3>
@@ -129,6 +133,8 @@ const TsFeaturesBadges = () => (
     </div>
   </div>
 );
+
+// --- Root export (depends on all composites above) ---
 
 export const TypeInspector = ({ graph, validationErrors, inferredTypes }: TypeInspectorProps) => {
   const hasErrors = validationErrors.length > 0;
