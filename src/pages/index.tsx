@@ -21,6 +21,38 @@ import { Play, Save, Trash2, CheckCircle2 } from "lucide-react";
 import { WorkflowExecutor } from "../engine/executor";
 import { useToast } from "../hooks/use-toast";
 
+function ClearWorkflowDialog({ onClear }: { onClear: () => void }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="bg-slate-700 border-slate-600 hover:bg-slate-600"
+        >
+          <Trash2 className="w-4 h-4 mr-2" />
+          Clear
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Clear workflow?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will remove all nodes and edges from the current workflow.
+            This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onClear}>
+            Yes, clear workflow
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
 export default function Index() {
   const {
     graph,
@@ -53,7 +85,6 @@ export default function Index() {
         y: Math.random() * 300 + 100,
       };
 
-      // Call factory with appropriate arguments
       let node;
       if (nodeType === "data.constant") {
         node = factory(nodeId, position, null);
@@ -185,33 +216,7 @@ export default function Index() {
             <Play className="w-4 h-4 mr-2" />
             {isExecuting ? "Executing..." : "Execute"}
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-slate-700 border-slate-600 hover:bg-slate-600"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Clear
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Clear workflow?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This will remove all nodes and edges from the current
-                  workflow. This action cannot be undone.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleClear}>
-                  Yes, clear workflow
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <ClearWorkflowDialog onClear={handleClear} />
         </div>
       </header>
 
@@ -227,11 +232,10 @@ export default function Index() {
           <WorkflowCanvas
             graph={graph}
             onNodesChange={(nodes) => {
-              // Handle bulk node updates
               nodes.forEach((node) => updateNode(node.id, node));
             }}
             onEdgesChange={(edges) => {
-              // This is simplified - in production you'd handle edge updates properly
+              // Simplified - handle edge updates properly in production
             }}
           />
         </main>
