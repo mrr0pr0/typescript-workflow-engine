@@ -6,6 +6,26 @@ import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+
+const NavigationMenuViewport = forwardRef<
+  ElementRef<typeof Viewport>,
+  ComponentPropsWithoutRef<typeof Viewport>
+>(({ className, ...props }, ref) => (
+  <div className={cn("absolute left-0 top-full flex justify-center")}>
+    <Viewport
+      className={cn(
+        "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
+        className
+      )}
+      ref={ref}
+      {...props}
+    />
+  </div>
+))
+NavigationMenuViewport.displayName =
+  Viewport.displayName
+
+
 const NavigationMenu = forwardRef<
   ElementRef<typeof Root>,
   ComponentPropsWithoutRef<typeof Root>
@@ -79,24 +99,6 @@ const NavigationMenuContent = forwardRef<
 NavigationMenuContent.displayName = Content.displayName
 
 const NavigationMenuLink = Link
-
-const NavigationMenuViewport = forwardRef<
-  ElementRef<typeof Viewport>,
-  ComponentPropsWithoutRef<typeof Viewport>
->(({ className, ...props }, ref) => (
-  <div className={cn("absolute left-0 top-full flex justify-center")}>
-    <Viewport
-      className={cn(
-        "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  </div>
-))
-NavigationMenuViewport.displayName =
-  Viewport.displayName
 
 const NavigationMenuIndicator = forwardRef<
   ElementRef<typeof Indicator>,
