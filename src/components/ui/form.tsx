@@ -16,6 +16,10 @@ import { Label } from "@/components/ui/label"
 
 const Form = FormProvider
 
+// ==============================
+// FormField Context
+// ==============================
+
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -24,6 +28,20 @@ type FormFieldContextValue<
 }
 
 const FormFieldContext = createContext<FormFieldContextValue | null>(null)
+
+// ==============================
+// FormItem Context (MOVED UP)
+// ==============================
+
+type FormItemContextValue = {
+  id: string
+}
+
+const FormItemContext = createContext<FormItemContextValue | null>(null)
+
+// ==============================
+// FormField Component
+// ==============================
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
@@ -37,6 +55,10 @@ const FormField = <
     </FormFieldContext.Provider>
   )
 }
+
+// ==============================
+// useFormField Hook
+// ==============================
 
 const useFormField = () => {
   const fieldContext = useContext(FormFieldContext)
@@ -52,7 +74,6 @@ const useFormField = () => {
   }
 
   const fieldState = getFieldState(fieldContext.name, formState)
-
   const { id } = itemContext
 
   return {
@@ -65,11 +86,9 @@ const useFormField = () => {
   }
 }
 
-type FormItemContextValue = {
-  id: string
-}
-
-const FormItemContext = createContext<FormItemContextValue | null>(null)
+// ==============================
+// FormItem
+// ==============================
 
 const FormItem = forwardRef<
   HTMLDivElement,
@@ -84,6 +103,10 @@ const FormItem = forwardRef<
   )
 })
 FormItem.displayName = "FormItem"
+
+// ==============================
+// FormLabel
+// ==============================
 
 const FormLabel = forwardRef<
   ElementRef<typeof Root>,
@@ -102,11 +125,16 @@ const FormLabel = forwardRef<
 })
 FormLabel.displayName = "FormLabel"
 
+// ==============================
+// FormControl
+// ==============================
+
 const FormControl = forwardRef<
   ElementRef<typeof Slot>,
   ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+  const { error, formItemId, formDescriptionId, formMessageId } =
+    useFormField()
 
   return (
     <Slot
@@ -114,7 +142,7 @@ const FormControl = forwardRef<
       id={formItemId}
       aria-describedby={
         !error
-          ? `${formDescriptionId}`
+          ? formDescriptionId
           : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={Boolean(error)}
@@ -123,6 +151,10 @@ const FormControl = forwardRef<
   )
 })
 FormControl.displayName = "FormControl"
+
+// ==============================
+// FormDescription
+// ==============================
 
 const FormDescription = forwardRef<
   HTMLParagraphElement,
@@ -141,6 +173,10 @@ const FormDescription = forwardRef<
 })
 FormDescription.displayName = "FormDescription"
 
+// ==============================
+// FormMessage
+// ==============================
+
 const FormMessage = forwardRef<
   HTMLParagraphElement,
   HTMLAttributes<HTMLParagraphElement>
@@ -148,9 +184,7 @@ const FormMessage = forwardRef<
   const { error, formMessageId } = useFormField()
   const body = error ? String(error?.message ?? "") : children
 
-  if (!body) {
-    return null
-  }
+  if (!body) return null
 
   return (
     <p
@@ -164,6 +198,10 @@ const FormMessage = forwardRef<
   )
 })
 FormMessage.displayName = "FormMessage"
+
+// ==============================
+// Exports
+// ==============================
 
 export {
   useFormField,
