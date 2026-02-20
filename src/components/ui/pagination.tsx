@@ -46,6 +46,7 @@ const PaginationLink = ({
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
+  // skipcq: JS-0738
   <a
     aria-current={isActive ? "page" : undefined}
     className={cn(
