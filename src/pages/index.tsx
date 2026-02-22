@@ -234,6 +234,7 @@ export default function Index() {
             onNodesChange={(nodes) => {
               nodes.forEach((node) => updateNode(node.id, node));
             }}
+            // skipcq JS-0356
             onEdgesChange={(edges) => {
               // Simplified - handle edge updates properly in production
             }}
