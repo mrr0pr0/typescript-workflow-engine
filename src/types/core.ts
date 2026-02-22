@@ -24,8 +24,8 @@ export type PortType =
   | { kind: "void"; type: undefined }
   | { kind: "custom"; type: unknown; typeName: string };
 
-// Port definition with generic type parameter
-export interface Port<T = unknown> {
+// Port definition
+export interface Port {
   readonly id: string;
   readonly name: string;
   readonly portType: PortType;
@@ -34,10 +34,8 @@ export interface Port<T = unknown> {
 }
 
 // Input and Output port types
-export type InputPort<T = unknown> = Port<T> & { readonly direction: "input" };
-export type OutputPort<T = unknown> = Port<T> & {
-  readonly direction: "output";
-};
+export type InputPort = Port & { readonly direction: "input" };
+export type OutputPort = Port & { readonly direction: "output" };
 
 // Node category for organization
 export type NodeCategory =
@@ -47,11 +45,8 @@ export type NodeCategory =
   | "effect"
   | "data";
 
-// Base node interface with generic constraints
-export interface BaseNode<
-  TInputs extends Record<string, unknown> = Record<string, unknown>,
-  TOutputs extends Record<string, unknown> = Record<string, unknown>,
-> {
+// Base node interface
+export interface BaseNode {
   readonly id: NodeId;
   readonly type: string;
   readonly category: NodeCategory;
@@ -72,46 +67,31 @@ export type WorkflowNode =
   | DataNode;
 
 // Trigger nodes (no inputs, only outputs)
-export interface TriggerNode extends BaseNode<
-  Record<string, never>,
-  { trigger: unknown }
-> {
+export interface TriggerNode extends BaseNode {
   readonly type: "trigger.http" | "trigger.timer" | "trigger.manual";
   readonly category: "trigger";
 }
 
 // Condition nodes (boolean input/output)
-export interface ConditionNode extends BaseNode<
-  { condition: boolean },
-  { true: boolean; false: boolean }
-> {
+export interface ConditionNode extends BaseNode {
   readonly type: "logic.if" | "logic.switch" | "logic.compare";
   readonly category: "logic";
 }
 
 // Transform nodes (data in, data out)
-export interface TransformNode extends BaseNode<
-  { input: unknown },
-  { output: unknown }
-> {
+export interface TransformNode extends BaseNode {
   readonly type: "transform.map" | "transform.filter" | "transform.reduce";
   readonly category: "transform";
 }
 
 // Effect nodes (side effects, may have no output)
-export interface EffectNode extends BaseNode<
-  { input: unknown },
-  { result?: unknown }
-> {
+export interface EffectNode extends BaseNode {
   readonly type: "effect.http" | "effect.email" | "effect.db";
   readonly category: "effect";
 }
 
 // Data nodes (constants, variables)
-export interface DataNode extends BaseNode<
-  Record<string, never>,
-  { value: unknown }
-> {
+export interface DataNode extends BaseNode {
   readonly type: "data.constant" | "data.variable";
   readonly category: "data";
 }
@@ -188,14 +168,6 @@ export const isEffectNode = (node: WorkflowNode): node is EffectNode =>
 
 export const isDataNode = (node: WorkflowNode): node is DataNode =>
   node.category === "data";
-
-// Utility type for extracting input types from a node
-export type NodeInputs<T extends WorkflowNode> =
-  T extends BaseNode<infer I, Record<string, unknown>> ? I : never;
-
-// Utility type for extracting output types from a node
-export type NodeOutputs<T extends WorkflowNode> =
-  T extends BaseNode<Record<string, unknown>, infer O> ? O : never;
 
 // Readonly deep utility type
 export type DeepReadonly<T> = {

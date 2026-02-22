@@ -3,7 +3,7 @@
  */
 
 import { useEffect, useState } from "react";
-import type { WorkflowGraph, Edge } from "../types/core";
+import type { WorkflowGraph } from "../types/core";
 import { checkPortCompatibility } from "../types/compatibility";
 
 export const useTypeChecker = (graph: WorkflowGraph) => {

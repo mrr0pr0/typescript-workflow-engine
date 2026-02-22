@@ -17,7 +17,7 @@ import {
 import { useWorkflowGraph } from "../hooks/useWorkflowGraph";
 import { nodeFactories, type NodeFactoryType } from "../types/nodes";
 import { createNodeId } from "../types/core";
-import { Play, Save, Trash2, CheckCircle2 } from "lucide-react";
+import { Play, Trash2, CheckCircle2 } from "lucide-react";
 import { WorkflowExecutor } from "../engine/executor";
 import { useToast } from "../hooks/use-toast";
 
@@ -57,10 +57,7 @@ export default function Index() {
   const {
     graph,
     addNode,
-    removeNode,
     updateNode,
-    addEdge,
-    removeEdge,
     validateGraph,
     inferTypes,
     clearGraph,
@@ -236,6 +233,7 @@ export default function Index() {
             }}
             // skipcq JS-0356
             onEdgesChange={(edges) => {
+              // skipcq JS-0356
               // Simplified - handle edge updates properly in production
             }}
           />

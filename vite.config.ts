@@ -5,6 +5,7 @@ import { viteSourceLocator } from "@metagptx/vite-plugin-source-locator";
 import { atoms } from "@metagptx/web-sdk/plugins";
 
 // https://vitejs.dev/config/
+// skipcq JS-0356
 export default defineConfig(({ mode }) => ({
   plugins: [
     viteSourceLocator({
