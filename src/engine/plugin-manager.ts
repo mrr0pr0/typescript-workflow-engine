@@ -8,9 +8,6 @@ import type {
   PluginMetadata,
   PluginCapability,
   PluginRegistry,
-  NodeProviderPlugin,
-  ValidatorPlugin,
-  ExecutorPlugin,
 } from "../types/plugin";
 
 export class PluginManager implements PluginRegistry {

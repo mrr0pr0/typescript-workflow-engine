@@ -9,12 +9,10 @@ import type {
   Edge,
   NodeId,
   EdgeId,
-  ValidationError,
 } from "../types/core";
 import type {
   GraphValidationState,
   CycleDetectionResult,
-  InputSatisfaction,
   TopologicalSort,
   GraphValidationError,
 } from "../types/graph";

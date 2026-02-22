@@ -1,7 +1,7 @@
 import { createContext, useContext, forwardRef, useId, useMemo } from "react"
 import type { ReactNode, ComponentType, ComponentProps, CSSProperties } from "react"
 import { ResponsiveContainer, Tooltip, Legend } from "recharts"
-import type { TooltipProps, LegendProps } from "recharts"
+import type { LegendProps } from "recharts"
 
 import { cn } from "@/lib/utils"
 

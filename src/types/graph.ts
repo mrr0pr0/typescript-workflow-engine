@@ -3,7 +3,7 @@
  * Demonstrates: Recursive Types, Phantom Types, Advanced Type Inference
  */
 
-import type { NodeId, EdgeId, WorkflowNode, Edge, WorkflowGraph, ValidationError } from './core';
+import type { NodeId, EdgeId, WorkflowNode, Edge, WorkflowGraph } from './core';
 
 // Phantom type for graph validation states
 export type GraphState = 'unvalidated' | 'validated' | 'invalid';
@@ -148,7 +148,7 @@ export type ValidGraph<G extends WorkflowGraph> = G extends WorkflowGraph
     : never;
 
 // Higher-kinded type pattern for graph transformations
-export interface GraphTransformer<F> {
+export interface GraphTransformer<> {
     map<A, B>(graph: WorkflowGraph, f: (node: A) => B): WorkflowGraph;
     filter(graph: WorkflowGraph, predicate: (node: WorkflowNode) => boolean): WorkflowGraph;
     reduce<A>(graph: WorkflowGraph, f: (acc: A, node: WorkflowNode) => A, initial: A): A;

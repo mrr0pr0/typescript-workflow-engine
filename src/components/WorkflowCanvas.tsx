@@ -7,10 +7,10 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
-  Connection,
-  Node,
-  Edge as FlowEdge,
-  NodeTypes,
+  type Connection,
+  type Node,
+  type Edge as FlowEdge,
+  type NodeTypes,
   type NodeChange,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
@@ -21,7 +21,6 @@ import type {
   WorkflowNode,
   Edge,
   NodeId,
-  EdgeId,
 } from "../types/core";
 import { createEdgeId } from "../types/core";
 import { checkPortCompatibility } from "../types/compatibility";
@@ -37,28 +36,32 @@ export const WorkflowCanvas = ({
   graph,
   onNodesChange,
   onEdgesChange,
-  onNodeClick,
+  // onNodeClick is kept in props interface for external API but not used internally yet
+  onNodeClick: _onNodeClick,
 }: WorkflowCanvasProps) => {
   const { edgeValidation } = useTypeChecker(graph);
 
-  // Convert our graph format to React Flow format
-  const initialNodes: Node[] = useMemo(
+  // Convert our graph format to React Flow format.
+  // We cast `id` to string and `data` to Record<string, unknown> to satisfy
+  // React Flow's generic Node type, while preserving our typed WorkflowNode
+  // inside `data` at runtime.
+  const initialNodes = useMemo<Node[]>(
     () =>
       graph.nodes.map((node) => ({
-        id: node.id,
+        id: node.id as string,
         type: "workflowNode",
         position: node.position,
-        data: node,
+        data: node as unknown as Record<string, unknown>,
       })),
     [graph.nodes],
   );
 
-  const initialEdges: FlowEdge[] = useMemo(
+  const initialEdges = useMemo<FlowEdge[]>(
     () =>
       graph.edges.map((edge) => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
+        id: edge.id as string,
+        source: edge.source as string,
+        target: edge.target as string,
         sourceHandle: edge.sourcePort,
         targetHandle: edge.targetPort,
         animated: edgeValidation.get(edge.id) ?? true,
@@ -70,13 +73,13 @@ export const WorkflowCanvas = ({
     [graph.edges, edgeValidation],
   );
 
-  const [nodes, setNodes, onNodesChangeInternal] = useNodesState(initialNodes);
+  const [nodes, , onNodesChangeInternal] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChangeInternal] = useEdgesState(initialEdges);
 
-  // Custom node types
-  const nodeTypes: NodeTypes = useMemo(
+  // Custom node types — cast to NodeTypes to bridge the branded-id gap
+  const nodeTypes = useMemo<NodeTypes>(
     () => ({
-      workflowNode: NodeRenderer,
+      workflowNode: NodeRenderer as unknown as NodeTypes[string],
     }),
     [],
   );
@@ -121,7 +124,7 @@ export const WorkflowCanvas = ({
         addEdge(
           {
             ...connection,
-            id: newEdge.id,
+            id: newEdge.id as string,
             animated: compatibility.valid,
             style: {
               stroke: compatibility.valid ? "#3B82F6" : "#EF4444",
@@ -135,12 +138,11 @@ export const WorkflowCanvas = ({
     [graph, onEdgesChange, setEdges],
   );
 
-  // Handle node position change
+  // Handle node position changes — propagate back to our graph model
   const handleNodesChange = useCallback(
     (changes: NodeChange<Node>[]) => {
       onNodesChangeInternal(changes);
 
-      // Update positions in our graph
       const updatedNodes = nodes
         .map((node) => {
           const graphNode = graph.nodes.find((n) => n.id === node.id);

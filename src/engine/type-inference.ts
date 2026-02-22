@@ -5,8 +5,6 @@
 
 import type {
   WorkflowGraph,
-  WorkflowNode,
-  Edge,
   NodeId,
   PortType
 } from '../types/core';
