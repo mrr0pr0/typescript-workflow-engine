@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import type { WorkflowNode, NodeCategory, PortType } from '../types/core';
+import type { WorkflowNode } from '../types/core';
 
 // Port type schema
 const portTypeSchema = z.discriminatedUnion('kind', [
