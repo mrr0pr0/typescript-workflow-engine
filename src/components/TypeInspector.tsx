@@ -98,8 +98,8 @@ const ValidationErrors = ({ errors }: ValidationErrorsProps) => (
       <AlertCircle className="w-4 h-4 text-red-500" />
       Validation Errors
     </h3>
-    {errors.map((error, idx) => (
-      <Alert key={idx} className="bg-red-950 border-red-800">
+    {errors.map((error) => (
+      <Alert key={error} className="bg-red-950 border-red-800">
         <AlertDescription className="text-xs text-red-200">{error}</AlertDescription>
       </Alert>
     ))}
