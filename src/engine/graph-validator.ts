@@ -9,14 +9,14 @@ import type {
   Edge,
   NodeId,
   EdgeId,
-} from "../types/core";
+} from '../types/core';
 import type {
   GraphValidationState,
   CycleDetectionResult,
   TopologicalSort,
   GraphValidationError,
-} from "../types/graph";
-import { checkPortCompatibility } from "../types/compatibility";
+} from '../types/graph';
+import { checkPortCompatibility } from '../types/compatibility';
 
 export class GraphValidator {
   private nodes: Map<NodeId, WorkflowNode>;
@@ -47,7 +47,7 @@ export class GraphValidator {
     const cycleResult = this.detectCycles();
     if (cycleResult.hasCycle) {
       errors.push({
-        type: "cycle",
+        type: 'cycle',
         nodes: cycleResult.cycle,
       });
     }
@@ -155,11 +155,11 @@ export class GraphValidator {
     // Check if all nodes were processed
     if (result.length !== this.nodes.size) {
       const problematicNodes = Array.from(this.nodes.keys()).filter(
-        (id) => !result.includes(id),
+        (id) => !result.includes(id)
       );
       return {
         success: false,
-        reason: "Graph contains cycles",
+        reason: 'Graph contains cycles',
         problematicNodes,
       };
     }
@@ -177,12 +177,12 @@ export class GraphValidator {
       for (const input of node.inputs) {
         if (input.required) {
           const isConnected = Array.from(this.edges.values()).some(
-            (edge) => edge.target === node.id && edge.targetPort === input.id,
+            (edge) => edge.target === node.id && edge.targetPort === input.id
           );
 
           if (!isConnected) {
             errors.push({
-              type: "unsatisfied-input",
+              type: 'unsatisfied-input',
               nodeId: node.id,
               portId: input.id,
             });
@@ -209,31 +209,31 @@ export class GraphValidator {
       }
 
       const sourcePort = sourceNode.outputs.find(
-        (p) => p.id === edge.sourcePort,
+        (p) => p.id === edge.sourcePort
       );
       const targetPort = targetNode.inputs.find(
-        (p) => p.id === edge.targetPort,
+        (p) => p.id === edge.targetPort
       );
 
       if (!sourcePort || !targetPort) {
         errors.push({
-          type: "invalid-connection",
+          type: 'invalid-connection',
           edgeId: edge.id as EdgeId,
-          reason: "Port not found",
+          reason: 'Port not found',
         });
         continue;
       }
 
       const compatibility = checkPortCompatibility(
         sourcePort.portType,
-        targetPort.portType,
+        targetPort.portType
       );
 
       if (!compatibility.valid) {
         errors.push({
-          type: "invalid-connection",
+          type: 'invalid-connection',
           edgeId: edge.id as EdgeId,
-          reason: compatibility.errorMessage || "Type mismatch",
+          reason: compatibility.errorMessage || 'Type mismatch',
         });
       }
     }
@@ -256,7 +256,7 @@ export class GraphValidator {
     for (const nodeId of this.nodes.keys()) {
       if (!connectedNodes.has(nodeId) && this.nodes.size > 1) {
         errors.push({
-          type: "orphan-node",
+          type: 'orphan-node',
           nodeId,
         });
       }
@@ -276,7 +276,7 @@ export class GraphValidator {
     for (const node of this.graph.nodes) {
       if (nodeIds.has(node.id)) {
         errors.push({
-          type: "duplicate-node-id",
+          type: 'duplicate-node-id',
           nodeId: node.id,
         });
       }
@@ -286,7 +286,7 @@ export class GraphValidator {
     for (const edge of this.graph.edges) {
       if (edgeIds.has(edge.id as EdgeId)) {
         errors.push({
-          type: "duplicate-edge-id",
+          type: 'duplicate-edge-id',
           edgeId: edge.id as EdgeId,
         });
       }
@@ -305,14 +305,14 @@ export class GraphValidator {
     for (const edge of this.edges.values()) {
       if (!this.nodes.has(edge.source)) {
         errors.push({
-          type: "missing-node",
+          type: 'missing-node',
           nodeId: edge.source,
           referencedBy: edge.id as EdgeId,
         });
       }
       if (!this.nodes.has(edge.target)) {
         errors.push({
-          type: "missing-node",
+          type: 'missing-node',
           nodeId: edge.target,
           referencedBy: edge.id as EdgeId,
         });
@@ -373,13 +373,13 @@ export class GraphValidator {
         Array.from(this.adjacencyList.entries()).map(([k, v]) => [
           k,
           v as readonly NodeId[],
-        ]),
+        ])
       ),
       reverseAdjacencyList: new Map(
         Array.from(this.reverseAdjacencyList.entries()).map(([k, v]) => [
           k,
           v as readonly NodeId[],
-        ]),
+        ])
       ),
       inputSatisfaction: new Map(),
       cycles: [],
@@ -394,19 +394,19 @@ export class GraphValidator {
 export const formatValidationError = (error: GraphValidationError): string => {
   const errorType = error.type;
 
-  if (errorType === "cycle") {
-    return `Cycle detected: ${error.nodes.join(" -> ")}`;
-  } else if (errorType === "unsatisfied-input") {
+  if (errorType === 'cycle') {
+    return `Cycle detected: ${error.nodes.join(' -> ')}`;
+  } else if (errorType === 'unsatisfied-input') {
     return `Unsatisfied input: ${error.nodeId}:${error.portId}`;
-  } else if (errorType === "invalid-connection") {
+  } else if (errorType === 'invalid-connection') {
     return `Invalid connection ${error.edgeId}: ${error.reason}`;
-  } else if (errorType === "orphan-node") {
+  } else if (errorType === 'orphan-node') {
     return `Orphan node: ${error.nodeId}`;
-  } else if (errorType === "duplicate-node-id") {
+  } else if (errorType === 'duplicate-node-id') {
     return `Duplicate node ID: ${error.nodeId}`;
-  } else if (errorType === "duplicate-edge-id") {
+  } else if (errorType === 'duplicate-edge-id') {
     return `Duplicate edge ID: ${error.edgeId}`;
-  } else if (errorType === "missing-node") {
+  } else if (errorType === 'missing-node') {
     return `Missing node ${error.nodeId} referenced by ${error.referencedBy}`;
   } else {
     const _exhaustive: never = errorType;

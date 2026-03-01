@@ -7,7 +7,7 @@ import type {
   WorkflowNode,
   NodeId,
   ExecutionContext,
-  ExecutionResult
+  ExecutionResult,
 } from '../types/core';
 import { GraphValidator } from './graph-validator';
 import { TypeInferenceEngine } from './type-inference';
@@ -31,7 +31,7 @@ export class WorkflowExecutor {
     this.state = {
       nodeOutputs: new Map(),
       executedNodes: new Set(),
-      logs: []
+      logs: [],
     };
   }
 
@@ -45,8 +45,10 @@ export class WorkflowExecutor {
       if (!validation.valid) {
         return {
           success: false,
-          error: new Error(`Graph validation failed: ${validation.errors.length} errors`),
-          logs: this.state.logs
+          error: new Error(
+            `Graph validation failed: ${validation.errors.length} errors`
+          ),
+          logs: this.state.logs,
         };
       }
 
@@ -60,7 +62,7 @@ export class WorkflowExecutor {
         return {
           success: false,
           error: new Error('Cannot execute: graph contains cycles'),
-          logs: this.state.logs
+          logs: this.state.logs,
         };
       }
 
@@ -75,13 +77,13 @@ export class WorkflowExecutor {
       return {
         success: true,
         output: outputs,
-        logs: this.state.logs
+        logs: this.state.logs,
       };
     } catch (error) {
       return {
         success: false,
         error: error instanceof Error ? error : new Error(String(error)),
-        logs: this.state.logs
+        logs: this.state.logs,
       };
     }
   }
@@ -89,8 +91,11 @@ export class WorkflowExecutor {
   /**
    * Execute a single node
    */
-  private async executeNode(nodeId: NodeId, context: ExecutionContext): Promise<void> {
-    const node = this.graph.nodes.find(n => n.id === nodeId);
+  private async executeNode(
+    nodeId: NodeId,
+    context: ExecutionContext
+  ): Promise<void> {
+    const node = this.graph.nodes.find((n) => n.id === nodeId);
     if (!node) {
       throw new Error(`Node not found: ${nodeId}`);
     }
@@ -105,7 +110,10 @@ export class WorkflowExecutor {
 
     // Store outputs
     for (const [portId, value] of Object.entries(outputs)) {
-      this.state.nodeOutputs.set(WorkflowExecutor.makeKey(nodeId, portId), value);
+      this.state.nodeOutputs.set(
+        WorkflowExecutor.makeKey(nodeId, portId),
+        value
+      );
     }
 
     this.state.executedNodes.add(nodeId);
@@ -120,7 +128,7 @@ export class WorkflowExecutor {
 
     for (const input of node.inputs) {
       const edge = this.graph.edges.find(
-        e => e.target === node.id && e.targetPort === input.id
+        (e) => e.target === node.id && e.targetPort === input.id
       );
 
       if (edge) {
@@ -167,9 +175,14 @@ export class WorkflowExecutor {
   /**
    * Execute trigger node
    */
-  private static executeTrigger(node: WorkflowNode, context: ExecutionContext): Record<string, unknown> {
+  private static executeTrigger(
+    node: WorkflowNode,
+    context: ExecutionContext
+  ): Record<string, unknown> {
     if (node.type === 'trigger.http') {
-      return { request: { method: 'GET', url: '/', timestamp: context.timestamp } };
+      return {
+        request: { method: 'GET', url: '/', timestamp: context.timestamp },
+      };
     } else if (node.type === 'trigger.timer') {
       return { timestamp: context.timestamp };
     } else if (node.type === 'trigger.manual') {
@@ -181,7 +194,10 @@ export class WorkflowExecutor {
   /**
    * Execute logic node
    */
-  private static executeLogic(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
+  private static executeLogic(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>
+  ): Record<string, unknown> {
     if (node.type === 'logic.if') {
       const condition = Boolean(inputs.condition);
       return { true: condition, false: !condition };
@@ -198,13 +214,16 @@ export class WorkflowExecutor {
   /**
    * Execute transform node
    */
-  private static executeTransform(node: WorkflowNode, inputs: Record<string, unknown>): Record<string, unknown> {
+  private static executeTransform(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>
+  ): Record<string, unknown> {
     const input = inputs.input;
 
     if (node.type === 'transform.map') {
       if (Array.isArray(input)) {
         // In a real system, this would use the configured map function
-        return { output: input.map(x => x) };
+        return { output: input.map((x) => x) };
       }
     } else if (node.type === 'transform.filter') {
       if (Array.isArray(input)) {
@@ -212,7 +231,9 @@ export class WorkflowExecutor {
       }
     } else if (node.type === 'transform.reduce') {
       if (Array.isArray(input)) {
-        return { output: input.reduce((acc, x) => acc + x, inputs.initial || 0) };
+        return {
+          output: input.reduce((acc, x) => acc + x, inputs.initial || 0),
+        };
       }
     }
 
@@ -222,7 +243,10 @@ export class WorkflowExecutor {
   /**
    * Execute effect node (async) — uses `this.log`, so remains an instance method
    */
-  private async executeEffect(node: WorkflowNode, inputs: Record<string, unknown>): Promise<Record<string, unknown>> {
+  private async executeEffect(
+    node: WorkflowNode,
+    inputs: Record<string, unknown>
+  ): Promise<Record<string, unknown>> {
     if (node.type === 'effect.http') {
       // Simulate HTTP request
       this.log(`HTTP Request: ${inputs.url}`);
@@ -256,8 +280,8 @@ export class WorkflowExecutor {
     const outputs: Record<string, unknown> = {};
 
     // Find terminal nodes (nodes with no outgoing edges)
-    const terminalNodes = this.graph.nodes.filter(node => {
-      return !this.graph.edges.some(e => e.source === node.id);
+    const terminalNodes = this.graph.nodes.filter((node) => {
+      return !this.graph.edges.some((e) => e.source === node.id);
     });
 
     for (const node of terminalNodes) {

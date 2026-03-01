@@ -15,7 +15,11 @@ const portTypeSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('object'), type: z.record(z.unknown()) }),
   z.object({ kind: z.literal('array'), type: z.array(z.unknown()) }),
   z.object({ kind: z.literal('void'), type: z.void() }),
-  z.object({ kind: z.literal('custom'), type: z.unknown(), typeName: z.string() })
+  z.object({
+    kind: z.literal('custom'),
+    type: z.unknown(),
+    typeName: z.string(),
+  }),
 ]);
 
 // Port schema
@@ -25,7 +29,7 @@ const portSchema = z.object({
   portType: portTypeSchema,
   required: z.boolean(),
   description: z.string().optional(),
-  direction: z.enum(['input', 'output'])
+  direction: z.enum(['input', 'output']),
 });
 
 // Base node schema
@@ -39,39 +43,39 @@ const baseNodeSchema = z.object({
   outputs: z.array(portSchema),
   position: z.object({
     x: z.number(),
-    y: z.number()
+    y: z.number(),
   }),
-  data: z.record(z.unknown()).optional()
+  data: z.record(z.unknown()).optional(),
 });
 
 // Trigger node schema
 const triggerNodeSchema = baseNodeSchema.extend({
   type: z.enum(['trigger.http', 'trigger.timer', 'trigger.manual']),
-  category: z.literal('trigger')
+  category: z.literal('trigger'),
 });
 
 // Condition node schema
 const conditionNodeSchema = baseNodeSchema.extend({
   type: z.enum(['logic.if', 'logic.switch', 'logic.compare']),
-  category: z.literal('logic')
+  category: z.literal('logic'),
 });
 
 // Transform node schema
 const transformNodeSchema = baseNodeSchema.extend({
   type: z.enum(['transform.map', 'transform.filter', 'transform.reduce']),
-  category: z.literal('transform')
+  category: z.literal('transform'),
 });
 
 // Effect node schema
 const effectNodeSchema = baseNodeSchema.extend({
   type: z.enum(['effect.http', 'effect.email', 'effect.db']),
-  category: z.literal('effect')
+  category: z.literal('effect'),
 });
 
 // Data node schema
 const dataNodeSchema = baseNodeSchema.extend({
   type: z.enum(['data.constant', 'data.variable']),
-  category: z.literal('data')
+  category: z.literal('data'),
 });
 
 // Discriminated union for all node types
@@ -80,7 +84,7 @@ export const workflowNodeSchema = z.discriminatedUnion('category', [
   conditionNodeSchema,
   transformNodeSchema,
   effectNodeSchema,
-  dataNodeSchema
+  dataNodeSchema,
 ]);
 
 // Infer TypeScript type from schema
@@ -128,7 +132,7 @@ export const nodeSchemaRegistry = {
   'effect.email': effectNodeSchema,
   'effect.db': effectNodeSchema,
   'data.constant': dataNodeSchema,
-  'data.variable': dataNodeSchema
+  'data.variable': dataNodeSchema,
 } as const;
 
 // Type-safe schema lookup
@@ -136,6 +140,6 @@ export type NodeSchemaType = keyof typeof nodeSchemaRegistry;
 
 export const getNodeSchema = <T extends NodeSchemaType>(
   nodeType: T
-): typeof nodeSchemaRegistry[T] => {
+): (typeof nodeSchemaRegistry)[T] => {
   return nodeSchemaRegistry[nodeType];
 };

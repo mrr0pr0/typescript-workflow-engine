@@ -8,7 +8,7 @@ import type {
   PluginMetadata,
   PluginCapability,
   PluginRegistry,
-} from "../types/plugin";
+} from '../types/plugin';
 
 export class PluginManager implements PluginRegistry {
   readonly plugins: Map<string, Plugin>;
@@ -33,7 +33,7 @@ export class PluginManager implements PluginRegistry {
       initResult.catch((err) => {
         console.error(
           `Failed to initialize plugin ${plugin.metadata.id}:`,
-          err,
+          err
         );
       });
     }
@@ -52,7 +52,7 @@ export class PluginManager implements PluginRegistry {
     }
 
     console.log(
-      `Plugin registered: ${plugin.metadata.name} v${plugin.metadata.version}`,
+      `Plugin registered: ${plugin.metadata.name} v${plugin.metadata.version}`
     );
   }
 
@@ -94,7 +94,7 @@ export class PluginManager implements PluginRegistry {
    * Get all plugins with a specific capability
    */
   getByCapability<C extends PluginCapability>(
-    capability: C,
+    capability: C
   ): ReadonlyArray<Plugin<C>> {
     const pluginIds = this.capabilityIndex.get(capability) || new Set();
     const plugins: Plugin<C>[] = [];

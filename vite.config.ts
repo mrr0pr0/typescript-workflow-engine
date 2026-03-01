@@ -1,15 +1,15 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { viteSourceLocator } from "@metagptx/vite-plugin-source-locator";
-import { atoms } from "@metagptx/web-sdk/plugins";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+import { viteSourceLocator } from '@metagptx/vite-plugin-source-locator';
+import { atoms } from '@metagptx/web-sdk/plugins';
 
 // https://vitejs.dev/config/
 // skipcq JS-0356
 export default defineConfig(({ mode }) => ({
   plugins: [
     viteSourceLocator({
-      prefix: "mgx",
+      prefix: 'mgx',
     }),
     react(),
     atoms(),
@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
 }));

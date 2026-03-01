@@ -1,23 +1,17 @@
-import { forwardRef } from "react"
-import type { ElementRef, ComponentPropsWithoutRef } from "react"
-import { Root, Item, Indicator } from "@radix-ui/react-radio-group"
-import { Circle } from "lucide-react"
+import { forwardRef } from 'react';
+import type { ElementRef, ComponentPropsWithoutRef } from 'react';
+import { Root, Item, Indicator } from '@radix-ui/react-radio-group';
+import { Circle } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
 const RadioGroup = forwardRef<
   ElementRef<typeof Root>,
   ComponentPropsWithoutRef<typeof Root>
 >(({ className, ...props }, ref) => {
-  return (
-    <Root
-      className={cn("grid gap-2", className)}
-      {...props}
-      ref={ref}
-    />
-  )
-})
-RadioGroup.displayName = Root.displayName
+  return <Root className={cn('grid gap-2', className)} {...props} ref={ref} />;
+});
+RadioGroup.displayName = Root.displayName;
 
 const RadioGroupItem = forwardRef<
   ElementRef<typeof Item>,
@@ -27,7 +21,7 @@ const RadioGroupItem = forwardRef<
     <Item
       ref={ref}
       className={cn(
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+        'aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       {...props}
@@ -36,8 +30,8 @@ const RadioGroupItem = forwardRef<
         <Circle className="h-3.5 w-3.5 fill-primary" />
       </Indicator>
     </Item>
-  )
-})
-RadioGroupItem.displayName = Item.displayName
+  );
+});
+RadioGroupItem.displayName = Item.displayName;
 
-export { RadioGroup, RadioGroupItem }
+export { RadioGroup, RadioGroupItem };

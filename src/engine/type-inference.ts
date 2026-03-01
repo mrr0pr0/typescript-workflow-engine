@@ -3,11 +3,7 @@
  * Demonstrates: Advanced Type Inference, Type Propagation
  */
 
-import type {
-  WorkflowGraph,
-  NodeId,
-  PortType
-} from '../types/core';
+import type { WorkflowGraph, NodeId, PortType } from '../types/core';
 import { GraphValidator } from './graph-validator';
 
 export interface InferredType {
@@ -55,7 +51,7 @@ export class TypeInferenceEngine {
    * Infer types for a specific node
    */
   private inferNodeTypes(nodeId: NodeId): void {
-    const node = this.graph.nodes.find(n => n.id === nodeId);
+    const node = this.graph.nodes.find((n) => n.id === nodeId);
     if (!node) return;
 
     // Infer output types based on node type and inputs
@@ -66,7 +62,7 @@ export class TypeInferenceEngine {
       this.inferredTypes.set(key, {
         nodeId,
         portId: output.id,
-        portType: output.portType
+        portType: output.portType,
       });
     }
 
@@ -78,11 +74,19 @@ export class TypeInferenceEngine {
    * Propagate types through connections
    */
   private propagateTypes(sourceNodeId: NodeId): void {
-    const outgoingEdges = this.graph.edges.filter(e => e.source === sourceNodeId);
+    const outgoingEdges = this.graph.edges.filter(
+      (e) => e.source === sourceNodeId
+    );
 
     for (const edge of outgoingEdges) {
-      const sourceKey = TypeInferenceEngine.makeKey(edge.source, edge.sourcePort);
-      const targetKey = TypeInferenceEngine.makeKey(edge.target, edge.targetPort);
+      const sourceKey = TypeInferenceEngine.makeKey(
+        edge.source,
+        edge.sourcePort
+      );
+      const targetKey = TypeInferenceEngine.makeKey(
+        edge.target,
+        edge.targetPort
+      );
 
       const sourceType = this.inferredTypes.get(sourceKey);
       if (sourceType) {
@@ -92,8 +96,8 @@ export class TypeInferenceEngine {
           portType: sourceType.portType,
           inferredFrom: {
             nodeId: edge.source,
-            portId: edge.sourcePort
-          }
+            portId: edge.sourcePort,
+          },
         });
       }
     }
@@ -111,7 +115,7 @@ export class TypeInferenceEngine {
    */
   getNodeInferredTypes(nodeId: NodeId): InferredType[] {
     return Array.from(this.inferredTypes.values()).filter(
-      t => t.nodeId === nodeId
+      (t) => t.nodeId === nodeId
     );
   }
 
@@ -122,8 +126,8 @@ export class TypeInferenceEngine {
     const outputTypes: PortType[] = [];
 
     // Find terminal nodes (nodes with no outgoing edges)
-    const terminalNodes = this.graph.nodes.filter(node => {
-      return !this.graph.edges.some(e => e.source === node.id);
+    const terminalNodes = this.graph.nodes.filter((node) => {
+      return !this.graph.edges.some((e) => e.source === node.id);
     });
 
     for (const node of terminalNodes) {
@@ -180,7 +184,7 @@ export class TypeInferenceEngine {
       complete: missingInferences.length === 0,
       totalPorts,
       inferredPorts: this.inferredTypes.size,
-      missingInferences
+      missingInferences,
     };
   }
 
@@ -220,7 +224,7 @@ export function leastUpperBound(types: PortType[]): PortType {
 
   // Check if all types are the same
   const firstKind = types[0].kind;
-  if (types.every(t => t.kind === firstKind)) {
+  if (types.every((t) => t.kind === firstKind)) {
     return types[0];
   }
 

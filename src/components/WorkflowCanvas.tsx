@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from 'react';
 import {
   ReactFlow,
   Background,
@@ -12,18 +12,13 @@ import {
   type Edge as FlowEdge,
   type NodeTypes,
   type NodeChange,
-} from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-import { NodeRenderer } from "./NodeRenderer";
-import { useTypeChecker } from "../hooks/useTypeChecker";
-import type {
-  WorkflowGraph,
-  WorkflowNode,
-  Edge,
-  NodeId,
-} from "../types/core";
-import { createEdgeId } from "../types/core";
-import { checkPortCompatibility } from "../types/compatibility";
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+import { NodeRenderer } from './NodeRenderer';
+import { useTypeChecker } from '../hooks/useTypeChecker';
+import type { WorkflowGraph, WorkflowNode, Edge, NodeId } from '../types/core';
+import { createEdgeId } from '../types/core';
+import { checkPortCompatibility } from '../types/compatibility';
 
 interface WorkflowCanvasProps {
   graph: WorkflowGraph;
@@ -49,11 +44,11 @@ export const WorkflowCanvas = ({
     () =>
       graph.nodes.map((node) => ({
         id: node.id as string,
-        type: "workflowNode",
+        type: 'workflowNode',
         position: node.position,
         data: node as unknown as Record<string, unknown>,
       })),
-    [graph.nodes],
+    [graph.nodes]
   );
 
   const initialEdges = useMemo<FlowEdge[]>(
@@ -66,11 +61,11 @@ export const WorkflowCanvas = ({
         targetHandle: edge.targetPort,
         animated: edgeValidation.get(edge.id) ?? true,
         style: {
-          stroke: edgeValidation.get(edge.id) === false ? "#EF4444" : "#3B82F6",
+          stroke: edgeValidation.get(edge.id) === false ? '#EF4444' : '#3B82F6',
           strokeWidth: 2,
         },
       })),
-    [graph.edges, edgeValidation],
+    [graph.edges, edgeValidation]
   );
 
   const [nodes, , onNodesChangeInternal] = useNodesState(initialNodes);
@@ -81,7 +76,7 @@ export const WorkflowCanvas = ({
     () => ({
       workflowNode: NodeRenderer as unknown as NodeTypes[string],
     }),
-    [],
+    []
   );
 
   // Handle connection
@@ -95,17 +90,17 @@ export const WorkflowCanvas = ({
       if (!sourceNode || !targetNode) return;
 
       const sourcePort = sourceNode.outputs.find(
-        (p) => p.id === connection.sourceHandle,
+        (p) => p.id === connection.sourceHandle
       );
       const targetPort = targetNode.inputs.find(
-        (p) => p.id === connection.targetHandle,
+        (p) => p.id === connection.targetHandle
       );
 
       if (!sourcePort || !targetPort) return;
 
       const compatibility = checkPortCompatibility(
         sourcePort.portType,
-        targetPort.portType,
+        targetPort.portType
       );
 
       const newEdge: Edge = {
@@ -127,15 +122,15 @@ export const WorkflowCanvas = ({
             id: newEdge.id as string,
             animated: compatibility.valid,
             style: {
-              stroke: compatibility.valid ? "#3B82F6" : "#EF4444",
+              stroke: compatibility.valid ? '#3B82F6' : '#EF4444',
               strokeWidth: 2,
             },
           },
-          eds,
-        ),
+          eds
+        )
       );
     },
-    [graph, onEdgesChange, setEdges],
+    [graph, onEdgesChange, setEdges]
   );
 
   // Handle node position changes — propagate back to our graph model
@@ -158,7 +153,7 @@ export const WorkflowCanvas = ({
 
       onNodesChange(updatedNodes);
     },
-    [nodes, graph.nodes, onNodesChange, onNodesChangeInternal],
+    [nodes, graph.nodes, onNodesChange, onNodesChangeInternal]
   );
 
   return (
@@ -179,21 +174,21 @@ export const WorkflowCanvas = ({
           className="bg-slate-800 border-slate-700"
           nodeColor={(node) => {
             const workflowNode = graph.nodes.find((n) => n.id === node.id);
-            if (!workflowNode) return "#6B7280";
+            if (!workflowNode) return '#6B7280';
 
             switch (workflowNode.category) {
-              case "trigger":
-                return "#10B981";
-              case "logic":
-                return "#F59E0B";
-              case "transform":
-                return "#3B82F6";
-              case "effect":
-                return "#EF4444";
-              case "data":
-                return "#8B5CF6";
+              case 'trigger':
+                return '#10B981';
+              case 'logic':
+                return '#F59E0B';
+              case 'transform':
+                return '#3B82F6';
+              case 'effect':
+                return '#EF4444';
+              case 'data':
+                return '#8B5CF6';
               default:
-                return "#6B7280";
+                return '#6B7280';
             }
           }}
         />

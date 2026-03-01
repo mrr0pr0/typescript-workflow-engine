@@ -1,11 +1,11 @@
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { ScrollArea } from "./ui/scroll-area";
-import { Badge } from "./ui/badge";
-import { Alert, AlertDescription } from "./ui/alert";
-import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
-import type { WorkflowGraph } from "../types/core";
-import type { InferredType } from "../engine/type-inference";
-import { getPortTypeColor, getPortTypeLabel } from "../utils/type-helpers";
+import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
+import { ScrollArea } from './ui/scroll-area';
+import { Badge } from './ui/badge';
+import { Alert, AlertDescription } from './ui/alert';
+import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import type { WorkflowGraph } from '../types/core';
+import type { InferredType } from '../engine/type-inference';
+import { getPortTypeColor, getPortTypeLabel } from '../utils/type-helpers';
 
 interface TypeInspectorProps {
   graph: WorkflowGraph;
@@ -14,16 +14,16 @@ interface TypeInspectorProps {
 }
 
 const TS_FEATURES = [
-  "Discriminated Unions",
-  "Generics",
-  "Conditional Types",
-  "Mapped Types",
-  "Recursive Types",
-  "Type Guards",
-  "Branded Types",
-  "Module Augmentation",
-  "Template Literals",
-  "Phantom Types",
+  'Discriminated Unions',
+  'Generics',
+  'Conditional Types',
+  'Mapped Types',
+  'Recursive Types',
+  'Type Guards',
+  'Branded Types',
+  'Module Augmentation',
+  'Template Literals',
+  'Phantom Types',
 ];
 
 // --- Leaf components first ---
@@ -34,7 +34,11 @@ interface StatCellProps {
   valueClassName?: string;
 }
 
-const StatCell = ({ label, value, valueClassName = "text-slate-100" }: StatCellProps) => (
+const StatCell = ({
+  label,
+  value,
+  valueClassName = 'text-slate-100',
+}: StatCellProps) => (
   <div className="bg-slate-700 p-2 rounded">
     <div className="text-slate-400">{label}</div>
     <div className={`text-lg font-bold ${valueClassName}`}>{value}</div>
@@ -76,14 +80,23 @@ interface GraphStatsProps {
   errorCount: number;
 }
 
-const GraphStats = ({ nodeCount, edgeCount, typeCount, errorCount }: GraphStatsProps) => (
+const GraphStats = ({
+  nodeCount,
+  edgeCount,
+  typeCount,
+  errorCount,
+}: GraphStatsProps) => (
   <div className="space-y-2">
     <h3 className="text-sm font-semibold text-slate-200">Graph Statistics</h3>
     <div className="grid grid-cols-2 gap-2 text-xs">
       <StatCell label="Nodes" value={nodeCount} />
       <StatCell label="Edges" value={edgeCount} />
       <StatCell label="Inferred Types" value={typeCount} />
-      <StatCell label="Errors" value={errorCount} valueClassName="text-red-400" />
+      <StatCell
+        label="Errors"
+        value={errorCount}
+        valueClassName="text-red-400"
+      />
     </div>
   </div>
 );
@@ -100,7 +113,9 @@ const ValidationErrors = ({ errors }: ValidationErrorsProps) => (
     </h3>
     {errors.map((error) => (
       <Alert key={error} className="bg-red-950 border-red-800">
-        <AlertDescription className="text-xs text-red-200">{error}</AlertDescription>
+        <AlertDescription className="text-xs text-red-200">
+          {error}
+        </AlertDescription>
       </Alert>
     ))}
   </div>
@@ -126,7 +141,11 @@ const TsFeaturesBadges = () => (
     <h3 className="text-sm font-semibold text-slate-200">TS Features Used</h3>
     <div className="flex flex-wrap gap-1">
       {TS_FEATURES.map((feature) => (
-        <Badge key={feature} variant="secondary" className="text-[10px] bg-blue-950 text-blue-200">
+        <Badge
+          key={feature}
+          variant="secondary"
+          className="text-[10px] bg-blue-950 text-blue-200"
+        >
           {feature}
         </Badge>
       ))}
@@ -136,7 +155,11 @@ const TsFeaturesBadges = () => (
 
 // --- Root export (depends on all composites above) ---
 
-export const TypeInspector = ({ graph, validationErrors, inferredTypes }: TypeInspectorProps) => {
+export const TypeInspector = ({
+  graph,
+  validationErrors,
+  inferredTypes,
+}: TypeInspectorProps) => {
   const hasErrors = validationErrors.length > 0;
   const typeCount = inferredTypes.size;
 
@@ -145,9 +168,11 @@ export const TypeInspector = ({ graph, validationErrors, inferredTypes }: TypeIn
       <CardHeader className="pb-3">
         <CardTitle className="text-lg text-slate-100 flex items-center gap-2">
           Type Inspector
-          {hasErrors
-            ? <XCircle className="w-5 h-5 text-red-500" />
-            : <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
+          {hasErrors ? (
+            <XCircle className="w-5 h-5 text-red-500" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -160,7 +185,9 @@ export const TypeInspector = ({ graph, validationErrors, inferredTypes }: TypeIn
               errorCount={validationErrors.length}
             />
             {hasErrors && <ValidationErrors errors={validationErrors} />}
-            {typeCount > 0 && <InferredTypesList inferredTypes={inferredTypes} />}
+            {typeCount > 0 && (
+              <InferredTypesList inferredTypes={inferredTypes} />
+            )}
             <TsFeaturesBadges />
           </div>
         </ScrollArea>

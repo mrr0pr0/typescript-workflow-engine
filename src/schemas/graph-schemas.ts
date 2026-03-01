@@ -2,8 +2,8 @@
  * Graph Validation Schemas
  * Demonstrates: Complex Schema Composition, Recursive Validation
  */
-import { z } from 'zod'
-import { workflowNodeSchema } from './node-schemas'
+import { z } from 'zod';
+import { workflowNodeSchema } from './node-schemas';
 
 // edge schema
 export const edgeSchema = z.object({
@@ -13,14 +13,14 @@ export const edgeSchema = z.object({
   target: z.string(),
   targetPort: z.string(),
   valid: z.boolean(),
-  errorMessage: z.string().optional()
+  errorMessage: z.string().optional(),
 });
 
 // Graph metadata schema
 export const graphMetadataSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
-  version: z.string()
+  version: z.string(),
 });
 
 // Complete workflow graph schema
@@ -29,7 +29,7 @@ export const workflowGraphSchema = z.object({
   name: z.string(),
   nodes: z.array(workflowNodeSchema),
   edges: z.array(edgeSchema),
-  metadata: graphMetadataSchema.optional()
+  metadata: graphMetadataSchema.optional(),
 });
 
 // Infer TypeScript types from schemas
@@ -67,16 +67,22 @@ export const parseGraph = (data: unknown) => {
  * Validate that every edge references nodes that exist in the graph.
  * Returns a list of error messages (empty if valid).
  */
-export const validateEdgeReferences = (graph: InferredWorkflowGraph): string[] => {
-  const nodeIds = new Set(graph.nodes.map(n => n.id));
+export const validateEdgeReferences = (
+  graph: InferredWorkflowGraph
+): string[] => {
+  const nodeIds = new Set(graph.nodes.map((n) => n.id));
   const errors: string[] = [];
 
   for (const edge of graph.edges) {
     if (!nodeIds.has(edge.source)) {
-      errors.push(`Edge "${edge.id}" references missing source node "${edge.source}"`);
+      errors.push(
+        `Edge "${edge.id}" references missing source node "${edge.source}"`
+      );
     }
     if (!nodeIds.has(edge.target)) {
-      errors.push(`Edge "${edge.id}" references missing target node "${edge.target}"`);
+      errors.push(
+        `Edge "${edge.id}" references missing target node "${edge.target}"`
+      );
     }
   }
 
@@ -87,7 +93,9 @@ export const validateEdgeReferences = (graph: InferredWorkflowGraph): string[] =
  * Validate that there are no duplicate node IDs in the graph.
  * Returns a list of duplicated IDs (empty if valid).
  */
-export const validateUniqueNodeIds = (graph: InferredWorkflowGraph): string[] => {
+export const validateUniqueNodeIds = (
+  graph: InferredWorkflowGraph
+): string[] => {
   const seen = new Set<string>();
   const duplicates: string[] = [];
 
@@ -105,7 +113,9 @@ export const validateUniqueNodeIds = (graph: InferredWorkflowGraph): string[] =>
  * Validate that there are no duplicate edge IDs in the graph.
  * Returns a list of duplicated IDs (empty if valid).
  */
-export const validateUniqueEdgeIds = (graph: InferredWorkflowGraph): string[] => {
+export const validateUniqueEdgeIds = (
+  graph: InferredWorkflowGraph
+): string[] => {
   const seen = new Set<string>();
   const duplicates: string[] = [];
 
@@ -124,8 +134,10 @@ export const validateUniqueEdgeIds = (graph: InferredWorkflowGraph): string[] =>
  * on the referenced source/target nodes.
  * Returns a list of error messages (empty if valid).
  */
-export const validatePortReferences = (graph: InferredWorkflowGraph): string[] => {
-  const nodeMap = new Map(graph.nodes.map(n => [n.id, n]));
+export const validatePortReferences = (
+  graph: InferredWorkflowGraph
+): string[] => {
+  const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]));
   const errors: string[] = [];
 
   for (const edge of graph.edges) {
@@ -133,7 +145,9 @@ export const validatePortReferences = (graph: InferredWorkflowGraph): string[] =
     const targetNode = nodeMap.get(edge.target);
 
     if (sourceNode) {
-      const hasSourcePort = sourceNode.outputs.some(p => p.id === edge.sourcePort);
+      const hasSourcePort = sourceNode.outputs.some(
+        (p) => p.id === edge.sourcePort
+      );
       if (!hasSourcePort) {
         errors.push(
           `Edge "${edge.id}": source node "${edge.source}" has no output port "${edge.sourcePort}"`
@@ -142,7 +156,9 @@ export const validatePortReferences = (graph: InferredWorkflowGraph): string[] =
     }
 
     if (targetNode) {
-      const hasTargetPort = targetNode.inputs.some(p => p.id === edge.targetPort);
+      const hasTargetPort = targetNode.inputs.some(
+        (p) => p.id === edge.targetPort
+      );
       if (!hasTargetPort) {
         errors.push(
           `Edge "${edge.id}": target node "${edge.target}" has no input port "${edge.targetPort}"`
@@ -158,7 +174,9 @@ export const validatePortReferences = (graph: InferredWorkflowGraph): string[] =
  * Perform a full structural validation of a workflow graph.
  * Combines schema validation with reference and uniqueness checks.
  */
-export const validateWorkflowGraph = (data: unknown): {
+export const validateWorkflowGraph = (
+  data: unknown
+): {
   valid: boolean;
   errors: string[];
 } => {
@@ -168,8 +186,8 @@ export const validateWorkflowGraph = (data: unknown): {
     return {
       valid: false,
       errors: parseResult.error.issues.map(
-        issue => `[${issue.path.join('.')}] ${issue.message}`
-      )
+        (issue) => `[${issue.path.join('.')}] ${issue.message}`
+      ),
     };
   }
 
@@ -195,61 +213,63 @@ export const validateWorkflowGraph = (data: unknown): {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
 // --- Refinement schema (graph schema with structural checks baked in) ---
 
 /** A stricter graph schema that also validates structural integrity via Zod `.superRefine`. */
-export const strictWorkflowGraphSchema = workflowGraphSchema.superRefine((graph, ctx) => {
-  // Unique node IDs
-  const nodeIdSet = new Set<string>();
-  for (let i = 0; i < graph.nodes.length; i++) {
-    const id = graph.nodes[i].id;
-    if (nodeIdSet.has(id)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Duplicate node ID: "${id}"`,
-        path: ['nodes', i, 'id']
-      });
+export const strictWorkflowGraphSchema = workflowGraphSchema.superRefine(
+  (graph, ctx) => {
+    // Unique node IDs
+    const nodeIdSet = new Set<string>();
+    for (let i = 0; i < graph.nodes.length; i++) {
+      const id = graph.nodes[i].id;
+      if (nodeIdSet.has(id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate node ID: "${id}"`,
+          path: ['nodes', i, 'id'],
+        });
+      }
+      nodeIdSet.add(id);
     }
-    nodeIdSet.add(id);
-  }
 
-  // Unique edge IDs
-  const edgeIdSet = new Set<string>();
-  for (let i = 0; i < graph.edges.length; i++) {
-    const id = graph.edges[i].id;
-    if (edgeIdSet.has(id)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Duplicate edge ID: "${id}"`,
-        path: ['edges', i, 'id']
-      });
+    // Unique edge IDs
+    const edgeIdSet = new Set<string>();
+    for (let i = 0; i < graph.edges.length; i++) {
+      const id = graph.edges[i].id;
+      if (edgeIdSet.has(id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Duplicate edge ID: "${id}"`,
+          path: ['edges', i, 'id'],
+        });
+      }
+      edgeIdSet.add(id);
     }
-    edgeIdSet.add(id);
-  }
 
-  // Edge references
-  for (let i = 0; i < graph.edges.length; i++) {
-    const edge = graph.edges[i];
-    if (!nodeIdSet.has(edge.source)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Edge references missing source node "${edge.source}"`,
-        path: ['edges', i, 'source']
-      });
-    }
-    if (!nodeIdSet.has(edge.target)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Edge references missing target node "${edge.target}"`,
-        path: ['edges', i, 'target']
-      });
+    // Edge references
+    for (let i = 0; i < graph.edges.length; i++) {
+      const edge = graph.edges[i];
+      if (!nodeIdSet.has(edge.source)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Edge references missing source node "${edge.source}"`,
+          path: ['edges', i, 'source'],
+        });
+      }
+      if (!nodeIdSet.has(edge.target)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Edge references missing target node "${edge.target}"`,
+          path: ['edges', i, 'target'],
+        });
+      }
     }
   }
-});
+);
 
 export type StrictWorkflowGraph = z.infer<typeof strictWorkflowGraphSchema>;
 

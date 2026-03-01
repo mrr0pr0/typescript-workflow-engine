@@ -1,8 +1,8 @@
-import { forwardRef } from "react"
-import type { ElementRef, ComponentPropsWithoutRef } from "react"
-import { Root, Track, Range, Thumb } from "@radix-ui/react-slider"
+import { forwardRef } from 'react';
+import type { ElementRef, ComponentPropsWithoutRef } from 'react';
+import { Root, Track, Range, Thumb } from '@radix-ui/react-slider';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
 const Slider = forwardRef<
   ElementRef<typeof Root>,
@@ -11,7 +11,7 @@ const Slider = forwardRef<
   <Root
     ref={ref}
     className={cn(
-      "relative flex w-full touch-none select-none items-center",
+      'relative flex w-full touch-none select-none items-center',
       className
     )}
     {...props}
@@ -21,7 +21,7 @@ const Slider = forwardRef<
     </Track>
     <Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
   </Root>
-))
-Slider.displayName = Root.displayName
+));
+Slider.displayName = Root.displayName;
 
-export { Slider }
+export { Slider };

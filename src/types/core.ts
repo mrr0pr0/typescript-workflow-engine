@@ -4,9 +4,9 @@
  */
 
 // Branded type for unique identification
-export type NodeId = string & { readonly __brand: "NodeId" };
-export type EdgeId = string & { readonly __brand: "EdgeId" };
-export type WorkflowId = string & { readonly __brand: "WorkflowId" };
+export type NodeId = string & { readonly __brand: 'NodeId' };
+export type EdgeId = string & { readonly __brand: 'EdgeId' };
+export type WorkflowId = string & { readonly __brand: 'WorkflowId' };
 
 // Helper to create branded types
 export const createNodeId = (id: string): NodeId => id as NodeId;
@@ -15,14 +15,14 @@ export const createWorkflowId = (id: string): WorkflowId => id as WorkflowId;
 
 // Base port types for type-safe connections
 export type PortType =
-  | { kind: "any"; type: unknown }
-  | { kind: "string"; type: string }
-  | { kind: "number"; type: number }
-  | { kind: "boolean"; type: boolean }
-  | { kind: "object"; type: Record<string, unknown> }
-  | { kind: "array"; type: unknown[] }
-  | { kind: "void"; type: undefined }
-  | { kind: "custom"; type: unknown; typeName: string };
+  | { kind: 'any'; type: unknown }
+  | { kind: 'string'; type: string }
+  | { kind: 'number'; type: number }
+  | { kind: 'boolean'; type: boolean }
+  | { kind: 'object'; type: Record<string, unknown> }
+  | { kind: 'array'; type: unknown[] }
+  | { kind: 'void'; type: undefined }
+  | { kind: 'custom'; type: unknown; typeName: string };
 
 // Port definition
 export interface Port {
@@ -34,16 +34,16 @@ export interface Port {
 }
 
 // Input and Output port types
-export type InputPort = Port & { readonly direction: "input" };
-export type OutputPort = Port & { readonly direction: "output" };
+export type InputPort = Port & { readonly direction: 'input' };
+export type OutputPort = Port & { readonly direction: 'output' };
 
 // Node category for organization
 export type NodeCategory =
-  | "trigger"
-  | "logic"
-  | "transform"
-  | "effect"
-  | "data";
+  | 'trigger'
+  | 'logic'
+  | 'transform'
+  | 'effect'
+  | 'data';
 
 // Base node interface
 export interface BaseNode {
@@ -68,32 +68,32 @@ export type WorkflowNode =
 
 // Trigger nodes (no inputs, only outputs)
 export interface TriggerNode extends BaseNode {
-  readonly type: "trigger.http" | "trigger.timer" | "trigger.manual";
-  readonly category: "trigger";
+  readonly type: 'trigger.http' | 'trigger.timer' | 'trigger.manual';
+  readonly category: 'trigger';
 }
 
 // Condition nodes (boolean input/output)
 export interface ConditionNode extends BaseNode {
-  readonly type: "logic.if" | "logic.switch" | "logic.compare";
-  readonly category: "logic";
+  readonly type: 'logic.if' | 'logic.switch' | 'logic.compare';
+  readonly category: 'logic';
 }
 
 // Transform nodes (data in, data out)
 export interface TransformNode extends BaseNode {
-  readonly type: "transform.map" | "transform.filter" | "transform.reduce";
-  readonly category: "transform";
+  readonly type: 'transform.map' | 'transform.filter' | 'transform.reduce';
+  readonly category: 'transform';
 }
 
 // Effect nodes (side effects, may have no output)
 export interface EffectNode extends BaseNode {
-  readonly type: "effect.http" | "effect.email" | "effect.db";
-  readonly category: "effect";
+  readonly type: 'effect.http' | 'effect.email' | 'effect.db';
+  readonly category: 'effect';
 }
 
 // Data nodes (constants, variables)
 export interface DataNode extends BaseNode {
-  readonly type: "data.constant" | "data.variable";
-  readonly category: "data";
+  readonly type: 'data.constant' | 'data.variable';
+  readonly category: 'data';
 }
 
 // Edge connection between nodes
@@ -155,19 +155,19 @@ export type ExecutionResult<T = unknown> =
 
 // Type guards for node types
 export const isTriggerNode = (node: WorkflowNode): node is TriggerNode =>
-  node.category === "trigger";
+  node.category === 'trigger';
 
 export const isConditionNode = (node: WorkflowNode): node is ConditionNode =>
-  node.category === "logic";
+  node.category === 'logic';
 
 export const isTransformNode = (node: WorkflowNode): node is TransformNode =>
-  node.category === "transform";
+  node.category === 'transform';
 
 export const isEffectNode = (node: WorkflowNode): node is EffectNode =>
-  node.category === "effect";
+  node.category === 'effect';
 
 export const isDataNode = (node: WorkflowNode): node is DataNode =>
-  node.category === "data";
+  node.category === 'data';
 
 // Readonly deep utility type
 export type DeepReadonly<T> = {

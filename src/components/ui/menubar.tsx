@@ -1,40 +1,52 @@
-"use client"
+'use client';
 
-import { forwardRef } from "react"
-import type { ElementRef, ComponentPropsWithoutRef, ComponentProps, HTMLAttributes } from "react"
-import { Menu, Group, Portal, RadioGroup, Sub, Root, Trigger, SubTrigger, SubContent, Content, Item, CheckboxItem, RadioItem, Label, Separator, ItemIndicator } from "@radix-ui/react-menubar"
-import { Check, ChevronRight, Circle } from "lucide-react"
+import { forwardRef } from 'react';
+import type {
+  ElementRef,
+  ComponentPropsWithoutRef,
+  ComponentProps,
+  HTMLAttributes,
+} from 'react';
+import {
+  Menu,
+  Group,
+  Portal,
+  RadioGroup,
+  Sub,
+  Root,
+  Trigger,
+  SubTrigger,
+  SubContent,
+  Content,
+  Item,
+  CheckboxItem,
+  RadioItem,
+  Label,
+  Separator,
+  ItemIndicator,
+} from '@radix-ui/react-menubar';
+import { Check, ChevronRight, Circle } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
-function MenubarMenu({
-  ...props
-}: ComponentProps<typeof Menu>) {
-  return <Menu {...props} />
+function MenubarMenu({ ...props }: ComponentProps<typeof Menu>) {
+  return <Menu {...props} />;
 }
 
-function MenubarGroup({
-  ...props
-}: ComponentProps<typeof Group>) {
-  return <Group {...props} />
+function MenubarGroup({ ...props }: ComponentProps<typeof Group>) {
+  return <Group {...props} />;
 }
 
-function MenubarPortal({
-  ...props
-}: ComponentProps<typeof Portal>) {
-  return <Portal {...props} />
+function MenubarPortal({ ...props }: ComponentProps<typeof Portal>) {
+  return <Portal {...props} />;
 }
 
-function MenubarRadioGroup({
-  ...props
-}: ComponentProps<typeof RadioGroup>) {
-  return <RadioGroup {...props} />
+function MenubarRadioGroup({ ...props }: ComponentProps<typeof RadioGroup>) {
+  return <RadioGroup {...props} />;
 }
 
-function MenubarSub({
-  ...props
-}: ComponentProps<typeof Sub>) {
-  return <Sub data-slot="menubar-sub" {...props} />
+function MenubarSub({ ...props }: ComponentProps<typeof Sub>) {
+  return <Sub data-slot="menubar-sub" {...props} />;
 }
 
 const Menubar = forwardRef<
@@ -44,13 +56,13 @@ const Menubar = forwardRef<
   <Root
     ref={ref}
     className={cn(
-      "flex h-9 items-center space-x-1 rounded-md border bg-background p-1 shadow-sm",
+      'flex h-9 items-center space-x-1 rounded-md border bg-background p-1 shadow-sm',
       className
     )}
     {...props}
   />
-))
-Menubar.displayName = Root.displayName
+));
+Menubar.displayName = Root.displayName;
 
 const MenubarTrigger = forwardRef<
   ElementRef<typeof Trigger>,
@@ -59,25 +71,25 @@ const MenubarTrigger = forwardRef<
   <Trigger
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center rounded-sm px-3 py-1 text-sm font-medium outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
+      'flex cursor-default select-none items-center rounded-sm px-3 py-1 text-sm font-medium outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
       className
     )}
     {...props}
   />
-))
-MenubarTrigger.displayName = Trigger.displayName
+));
+MenubarTrigger.displayName = Trigger.displayName;
 
 const MenubarSubTrigger = forwardRef<
   ElementRef<typeof SubTrigger>,
   ComponentPropsWithoutRef<typeof SubTrigger> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, children, ...props }, ref) => (
   <SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
-      inset && "pl-8",
+      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+      inset && 'pl-8',
       className
     )}
     {...props}
@@ -85,8 +97,8 @@ const MenubarSubTrigger = forwardRef<
     {children}
     <ChevronRight className="ml-auto h-4 w-4" />
   </SubTrigger>
-))
-MenubarSubTrigger.displayName = SubTrigger.displayName
+));
+MenubarSubTrigger.displayName = SubTrigger.displayName;
 
 const MenubarSubContent = forwardRef<
   ElementRef<typeof SubContent>,
@@ -95,20 +107,20 @@ const MenubarSubContent = forwardRef<
   <SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+      'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]',
       className
     )}
     {...props}
   />
-))
-MenubarSubContent.displayName = SubContent.displayName
+));
+MenubarSubContent.displayName = SubContent.displayName;
 
 const MenubarContent = forwardRef<
   ElementRef<typeof Content>,
   ComponentPropsWithoutRef<typeof Content>
 >(
   (
-    { className, align = "start", alignOffset = -4, sideOffset = 8, ...props },
+    { className, align = 'start', alignOffset = -4, sideOffset = 8, ...props },
     ref
   ) => (
     <Portal>
@@ -118,33 +130,33 @@ const MenubarContent = forwardRef<
         alignOffset={alignOffset}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+          'z-50 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]',
           className
         )}
         {...props}
       />
     </Portal>
   )
-)
-MenubarContent.displayName = Content.displayName
+);
+MenubarContent.displayName = Content.displayName;
 
 const MenubarItem = forwardRef<
   ElementRef<typeof Item>,
   ComponentPropsWithoutRef<typeof Item> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      inset && "pl-8",
+      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      inset && 'pl-8',
       className
     )}
     {...props}
   />
-))
-MenubarItem.displayName = Item.displayName
+));
+MenubarItem.displayName = Item.displayName;
 
 const MenubarCheckboxItem = forwardRef<
   ElementRef<typeof CheckboxItem>,
@@ -153,7 +165,7 @@ const MenubarCheckboxItem = forwardRef<
   <CheckboxItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     checked={checked}
@@ -166,8 +178,8 @@ const MenubarCheckboxItem = forwardRef<
     </span>
     {children}
   </CheckboxItem>
-))
-MenubarCheckboxItem.displayName = CheckboxItem.displayName
+));
+MenubarCheckboxItem.displayName = CheckboxItem.displayName;
 
 const MenubarRadioItem = forwardRef<
   ElementRef<typeof RadioItem>,
@@ -176,7 +188,7 @@ const MenubarRadioItem = forwardRef<
   <RadioItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}
@@ -188,26 +200,26 @@ const MenubarRadioItem = forwardRef<
     </span>
     {children}
   </RadioItem>
-))
-MenubarRadioItem.displayName = RadioItem.displayName
+));
+MenubarRadioItem.displayName = RadioItem.displayName;
 
 const MenubarLabel = forwardRef<
   ElementRef<typeof Label>,
   ComponentPropsWithoutRef<typeof Label> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <Label
     ref={ref}
     className={cn(
-      "px-2 py-1.5 text-sm font-semibold",
-      inset && "pl-8",
+      'px-2 py-1.5 text-sm font-semibold',
+      inset && 'pl-8',
       className
     )}
     {...props}
   />
-))
-MenubarLabel.displayName = Label.displayName
+));
+MenubarLabel.displayName = Label.displayName;
 
 const MenubarSeparator = forwardRef<
   ElementRef<typeof Separator>,
@@ -215,11 +227,11 @@ const MenubarSeparator = forwardRef<
 >(({ className, ...props }, ref) => (
   <Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    className={cn('-mx-1 my-1 h-px bg-muted', className)}
     {...props}
   />
-))
-MenubarSeparator.displayName = Separator.displayName
+));
+MenubarSeparator.displayName = Separator.displayName;
 
 const MenubarShortcut = ({
   className,
@@ -228,14 +240,14 @@ const MenubarShortcut = ({
   return (
     <span
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground",
+        'ml-auto text-xs tracking-widest text-muted-foreground',
         className
       )}
       {...props}
     />
-  )
-}
-MenubarShortcut.displayname = "MenubarShortcut"
+  );
+};
+MenubarShortcut.displayname = 'MenubarShortcut';
 
 export {
   Menubar,
@@ -254,4 +266,4 @@ export {
   MenubarGroup,
   MenubarSub,
   MenubarShortcut,
-}
+};

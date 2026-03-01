@@ -134,6 +134,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      prettier:
+        specifier: ^3.8.1
+        version: 3.8.1
       prismjs:
         specifier: ^1.29.0
         version: 1.30.0

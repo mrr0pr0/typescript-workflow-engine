@@ -1,7 +1,11 @@
 import { memo } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
 import type { WorkflowNode } from '../types/core';
-import { getPortTypeColor, getPortTypeLabel, getCategoryColor } from '../utils/type-helpers';
+import {
+  getPortTypeColor,
+  getPortTypeLabel,
+  getCategoryColor,
+} from '../utils/type-helpers';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
 
@@ -33,7 +37,7 @@ export const NodeRenderer = memo(({ data }: NodeProps<WorkflowNode>) => {
                     width: 12,
                     height: 12,
                     border: '2px solid #1E293B',
-                    top: `${((idx + 1) * 100) / (node.inputs.length + 1)}%`
+                    top: `${((idx + 1) * 100) / (node.inputs.length + 1)}%`,
                   }}
                 />
                 <div className="flex items-center gap-2 text-xs">
@@ -43,7 +47,7 @@ export const NodeRenderer = memo(({ data }: NodeProps<WorkflowNode>) => {
                     className="text-[10px] px-1 py-0"
                     style={{
                       borderColor: getPortTypeColor(input.portType),
-                      color: getPortTypeColor(input.portType)
+                      color: getPortTypeColor(input.portType),
                     }}
                   >
                     {getPortTypeLabel(input.portType)}
@@ -71,7 +75,7 @@ export const NodeRenderer = memo(({ data }: NodeProps<WorkflowNode>) => {
                     width: 12,
                     height: 12,
                     border: '2px solid #1E293B',
-                    top: `${((idx + 1) * 100) / (node.outputs.length + 1)}%`
+                    top: `${((idx + 1) * 100) / (node.outputs.length + 1)}%`,
                   }}
                 />
                 <div className="flex items-center justify-end gap-2 text-xs">
@@ -80,7 +84,7 @@ export const NodeRenderer = memo(({ data }: NodeProps<WorkflowNode>) => {
                     className="text-[10px] px-1 py-0"
                     style={{
                       borderColor: getPortTypeColor(output.portType),
-                      color: getPortTypeColor(output.portType)
+                      color: getPortTypeColor(output.portType),
                     }}
                   >
                     {getPortTypeLabel(output.portType)}

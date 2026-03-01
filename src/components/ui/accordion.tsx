@@ -1,23 +1,25 @@
-import { forwardRef } from "react"
-import type { ElementRef, ComponentPropsWithoutRef } from "react"
-import { Root, Item, Header, Trigger, Content } from "@radix-ui/react-accordion"
-import { ChevronDown } from "lucide-react"
+import { forwardRef } from 'react';
+import type { ElementRef, ComponentPropsWithoutRef } from 'react';
+import {
+  Root,
+  Item,
+  Header,
+  Trigger,
+  Content,
+} from '@radix-ui/react-accordion';
+import { ChevronDown } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
-const Accordion = Root
+const Accordion = Root;
 
 const AccordionItem = forwardRef<
   ElementRef<typeof Item>,
   ComponentPropsWithoutRef<typeof Item>
 >(({ className, ...props }, ref) => (
-  <Item
-    ref={ref}
-    className={cn("border-b", className)}
-    {...props}
-  />
-))
-AccordionItem.displayName = "AccordionItem"
+  <Item ref={ref} className={cn('border-b', className)} {...props} />
+));
+AccordionItem.displayName = 'AccordionItem';
 
 const AccordionTrigger = forwardRef<
   ElementRef<typeof Trigger>,
@@ -27,7 +29,7 @@ const AccordionTrigger = forwardRef<
     <Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
+        'flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180',
         className
       )}
       {...props}
@@ -36,8 +38,8 @@ const AccordionTrigger = forwardRef<
       <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
     </Trigger>
   </Header>
-))
-AccordionTrigger.displayName = Trigger.displayName
+));
+AccordionTrigger.displayName = Trigger.displayName;
 
 const AccordionContent = forwardRef<
   ElementRef<typeof Content>,
@@ -48,9 +50,9 @@ const AccordionContent = forwardRef<
     className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+    <div className={cn('pb-4 pt-0', className)}>{children}</div>
   </Content>
-))
-AccordionContent.displayName = Content.displayName
+));
+AccordionContent.displayName = Content.displayName;
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };

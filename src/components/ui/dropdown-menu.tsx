@@ -1,35 +1,55 @@
-"use client"
+'use client';
 
-import { forwardRef } from "react"
-import type { ElementRef, ComponentPropsWithoutRef, HTMLAttributes } from "react"
-import { Root, Trigger, Group, Portal, Sub, RadioGroup, SubTrigger, SubContent, Content, Item, CheckboxItem, RadioItem, Label, Separator, ItemIndicator } from "@radix-ui/react-dropdown-menu"
-import { Check, ChevronRight, Circle } from "lucide-react"
+import { forwardRef } from 'react';
+import type {
+  ElementRef,
+  ComponentPropsWithoutRef,
+  HTMLAttributes,
+} from 'react';
+import {
+  Root,
+  Trigger,
+  Group,
+  Portal,
+  Sub,
+  RadioGroup,
+  SubTrigger,
+  SubContent,
+  Content,
+  Item,
+  CheckboxItem,
+  RadioItem,
+  Label,
+  Separator,
+  ItemIndicator,
+} from '@radix-ui/react-dropdown-menu';
+import { Check, ChevronRight, Circle } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
-const DropdownMenu = Root
+const DropdownMenu = Root;
 
-const DropdownMenuTrigger = Trigger
+const DropdownMenuTrigger = Trigger;
 
-const DropdownMenuGroup = Group
+const DropdownMenuGroup = Group;
 
-const DropdownMenuPortal = Portal
+const DropdownMenuPortal = Portal;
 
-const DropdownMenuSub = Sub
+const DropdownMenuSub = Sub;
 
-const DropdownMenuRadioGroup = RadioGroup
+const DropdownMenuRadioGroup = RadioGroup;
 
 const DropdownMenuSubTrigger = forwardRef<
   ElementRef<typeof SubTrigger>,
   ComponentPropsWithoutRef<typeof SubTrigger> & {
-    inset?: boolean
+    inset?: boolean;
   }
 >(({ className, inset, children, ...props }, ref) => (
   <SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-      inset && "pl-8",
+      'flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+      inset && 'pl-8',
       className
     )}
     {...props}
@@ -37,71 +57,69 @@ const DropdownMenuSubTrigger = forwardRef<
     {children}
     <ChevronRight className="ml-auto" />
   </SubTrigger>
-))
-DropdownMenuSubTrigger.displayName =
-SubTrigger.displayName
+));
+DropdownMenuSubTrigger.displayName = SubTrigger.displayName;
 
 const DropdownMenuSubContent = forwardRef<
-ElementRef<typeof SubContent>,
-ComponentPropsWithoutRef<typeof SubContent>
+  ElementRef<typeof SubContent>,
+  ComponentPropsWithoutRef<typeof SubContent>
 >(({ className, ...props }, ref) => (
   <SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+      'z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]',
       className
     )}
     {...props}
   />
-))
-DropdownMenuSubContent.displayName =
-SubContent.displayName
+));
+DropdownMenuSubContent.displayName = SubContent.displayName;
 
 const DropdownMenuContent = forwardRef<
-ElementRef<typeof Content>,
-ComponentPropsWithoutRef<typeof Content>
+  ElementRef<typeof Content>,
+  ComponentPropsWithoutRef<typeof Content>
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <Portal>
     <Content
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+        'z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]',
         className
       )}
       {...props}
     />
   </Portal>
-))
-DropdownMenuContent.displayName = Content.displayName
+));
+DropdownMenuContent.displayName = Content.displayName;
 
 const DropdownMenuItem = forwardRef<
-ElementRef<typeof Item>,
-ComponentPropsWithoutRef<typeof Item> & {
-    inset?: boolean
+  ElementRef<typeof Item>,
+  ComponentPropsWithoutRef<typeof Item> & {
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
-      inset && "pl-8",
+      'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0',
+      inset && 'pl-8',
       className
     )}
     {...props}
   />
-))
-DropdownMenuItem.displayName = Item.displayName
+));
+DropdownMenuItem.displayName = Item.displayName;
 
 const DropdownMenuCheckboxItem = forwardRef<
-ElementRef<typeof CheckboxItem>,
-ComponentPropsWithoutRef<typeof CheckboxItem>
+  ElementRef<typeof CheckboxItem>,
+  ComponentPropsWithoutRef<typeof CheckboxItem>
 >(({ className, children, checked, ...props }, ref) => (
   <CheckboxItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     checked={checked}
@@ -114,18 +132,17 @@ ComponentPropsWithoutRef<typeof CheckboxItem>
     </span>
     {children}
   </CheckboxItem>
-))
-DropdownMenuCheckboxItem.displayName =
-CheckboxItem.displayName
+));
+DropdownMenuCheckboxItem.displayName = CheckboxItem.displayName;
 
 const DropdownMenuRadioItem = forwardRef<
-ElementRef<typeof RadioItem>,
-ComponentPropsWithoutRef<typeof RadioItem>
+  ElementRef<typeof RadioItem>,
+  ComponentPropsWithoutRef<typeof RadioItem>
 >(({ className, children, ...props }, ref) => (
   <RadioItem
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}
@@ -137,38 +154,38 @@ ComponentPropsWithoutRef<typeof RadioItem>
     </span>
     {children}
   </RadioItem>
-))
-DropdownMenuRadioItem.displayName = RadioItem.displayName
+));
+DropdownMenuRadioItem.displayName = RadioItem.displayName;
 
 const DropdownMenuLabel = forwardRef<
-ElementRef<typeof Label>,
-ComponentPropsWithoutRef<typeof Label> & {
-    inset?: boolean
+  ElementRef<typeof Label>,
+  ComponentPropsWithoutRef<typeof Label> & {
+    inset?: boolean;
   }
 >(({ className, inset, ...props }, ref) => (
   <Label
     ref={ref}
     className={cn(
-      "px-2 py-1.5 text-sm font-semibold",
-      inset && "pl-8",
+      'px-2 py-1.5 text-sm font-semibold',
+      inset && 'pl-8',
       className
     )}
     {...props}
   />
-))
-DropdownMenuLabel.displayName = Label.displayName
+));
+DropdownMenuLabel.displayName = Label.displayName;
 
 const DropdownMenuSeparator = forwardRef<
-ElementRef<typeof Separator>,
-ComponentPropsWithoutRef<typeof Separator>
+  ElementRef<typeof Separator>,
+  ComponentPropsWithoutRef<typeof Separator>
 >(({ className, ...props }, ref) => (
   <Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+    className={cn('-mx-1 my-1 h-px bg-muted', className)}
     {...props}
   />
-))
-DropdownMenuSeparator.displayName = Separator.displayName
+));
+DropdownMenuSeparator.displayName = Separator.displayName;
 
 const DropdownMenuShortcut = ({
   className,
@@ -176,12 +193,12 @@ const DropdownMenuShortcut = ({
 }: HTMLAttributes<HTMLSpanElement>) => {
   return (
     <span
-      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
+      className={cn('ml-auto text-xs tracking-widest opacity-60', className)}
       {...props}
     />
-  )
-}
-DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
+  );
+};
+DropdownMenuShortcut.displayName = 'DropdownMenuShortcut';
 
 export {
   DropdownMenu,
@@ -199,4 +216,4 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-}
+};

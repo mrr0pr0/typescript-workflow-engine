@@ -3,39 +3,39 @@
  * Demonstrates: React Hooks with TypeScript, Immutable State Updates
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 import type {
   WorkflowGraph,
   WorkflowNode,
   Edge,
   NodeId,
   EdgeId,
-} from "../types/core";
-import { createWorkflowId } from "../types/core";
-import { GraphValidator } from "../engine/graph-validator";
+} from '../types/core';
+import { createWorkflowId } from '../types/core';
+import { GraphValidator } from '../engine/graph-validator';
 import {
   TypeInferenceEngine,
   type InferredType,
-} from "../engine/type-inference";
+} from '../engine/type-inference';
 
 export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
   const [graph, setGraph] = useState<WorkflowGraph>(
     initialGraph || {
-      id: createWorkflowId("workflow-1"),
-      name: "New Workflow",
+      id: createWorkflowId('workflow-1'),
+      name: 'New Workflow',
       nodes: [],
       edges: [],
       metadata: {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        version: "1.0.0",
+        version: '1.0.0',
       },
-    },
+    }
   );
 
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [inferredTypes, setInferredTypes] = useState<Map<string, InferredType>>(
-    new Map(),
+    new Map()
   );
 
   // Add node
@@ -56,7 +56,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       ...prev,
       nodes: prev.nodes.filter((n) => n.id !== nodeId),
       edges: prev.edges.filter(
-        (e) => e.source !== nodeId && e.target !== nodeId,
+        (e) => e.source !== nodeId && e.target !== nodeId
       ),
       metadata: {
         ...(prev.metadata || {}),
@@ -71,7 +71,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       setGraph((prev) => ({
         ...prev,
         nodes: prev.nodes.map((n) =>
-          n.id === nodeId ? { ...n, ...updates } : n,
+          n.id === nodeId ? { ...n, ...updates } : n
         ),
         metadata: {
           ...(prev.metadata || {}),
@@ -79,7 +79,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
         },
       }));
     },
-    [],
+    []
   );
 
   // Add edge
@@ -116,16 +116,16 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
     } else {
       const errors = result.errors.map((err) => {
         switch (err.type) {
-          case "cycle":
-            return `Cycle detected: ${err.nodes.join(" -> ")}`;
-          case "unsatisfied-input":
+          case 'cycle':
+            return `Cycle detected: ${err.nodes.join(' -> ')}`;
+          case 'unsatisfied-input':
             return `Unsatisfied input: ${err.nodeId}:${err.portId}`;
-          case "invalid-connection":
+          case 'invalid-connection':
             return `Invalid connection ${err.edgeId}: ${err.reason}`;
-          case "orphan-node":
+          case 'orphan-node':
             return `Orphan node: ${err.nodeId}`;
           default:
-            return "Unknown error";
+            return 'Unknown error';
         }
       });
       setValidationErrors(errors);
@@ -142,7 +142,7 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
       setInferredTypes(types);
       return true;
     } catch (error) {
-      console.error("Type inference failed:", error);
+      console.error('Type inference failed:', error);
       return false;
     }
   }, [graph]);
@@ -150,14 +150,14 @@ export const useWorkflowGraph = (initialGraph?: WorkflowGraph) => {
   // Clear graph
   const clearGraph = useCallback(() => {
     setGraph({
-      id: createWorkflowId("workflow-1"),
-      name: "New Workflow",
+      id: createWorkflowId('workflow-1'),
+      name: 'New Workflow',
       nodes: [],
       edges: [],
       metadata: {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        version: "1.0.0",
+        version: '1.0.0',
       },
     });
     setValidationErrors([]);
